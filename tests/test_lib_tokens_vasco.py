@@ -2,6 +2,7 @@
 This test file tests the lib.tokens.vascotoken
 This depends on lib.tokenclass
 """
+from __future__ import absolute_import
 import functools
 from binascii import hexlify
 
@@ -13,6 +14,7 @@ from privacyidea.lib.token import check_serial_pass
 from privacyidea.lib.tokens.vascotoken import VascoTokenClass
 from privacyidea.models import Token
 from tests.base import MyTestCase
+from six.moves import range
 
 def mock_verification(replacement):
     def decorator(f):
@@ -247,7 +249,7 @@ class VascoTokenTest(MyTestCase):
 
         self.assertTrue(token.check_failcount())
         # fail 10 times
-        for _ in xrange(10 + 1):
+        for _ in range(10 + 1):
             r = _step1()
             self.assertEqual(r[0], False)
             self.assertEqual(r[1].get('message'), 'wrong otp value')

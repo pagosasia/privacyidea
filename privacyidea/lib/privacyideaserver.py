@@ -17,6 +17,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 from privacyidea.models import PrivacyIDEAServer as PrivacyIDEAServerDB
 import logging
 from privacyidea.lib.log import log_with

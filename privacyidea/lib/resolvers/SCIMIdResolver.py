@@ -32,6 +32,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This is the resolver to find users in a SCIM service.
 
 The file is tested in tests/test_lib_resolver.py
@@ -41,11 +42,11 @@ import logging
 import traceback
 log = logging.getLogger(__name__)
 
-from UserIdResolver import UserIdResolver
+from .UserIdResolver import UserIdResolver
 import yaml
 import requests
 import base64
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 
 logger = logging.getLogger(__name__)
 

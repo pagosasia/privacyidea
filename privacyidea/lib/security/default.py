@@ -38,15 +38,18 @@ which is the encryption key in the file.
 The contents of the file is tested in tests/test_lib_crypto.py
 """
 
+from __future__ import absolute_import
 import logging
 import binascii
 import os
+from io import open
 
 from Crypto.Cipher import AES
 from privacyidea.lib.crypto import zerome
 from privacyidea.lib.crypto import geturandom
 from hashlib import sha256
 from privacyidea.lib.error import HSMException
+from six.moves import range
 
 
 TOKEN_KEY = 0
@@ -173,7 +176,7 @@ class DefaultSecurityModule(SecurityModule):
             raise HSMException("no secret file defined: PI_ENCFILE!")
 
         # We determine, if the file is encrypted.
-        with open(config.get("file")) as f:
+        with open(config.get("file"), 'rb') as f:
             cipher = f.read()
 
         if len(cipher) > 100:
@@ -227,7 +230,7 @@ class DefaultSecurityModule(SecurityModule):
 
         else:
             # Only read the key with the slot_id
-            with open(self.secFile) as f:
+            with open(self.secFile, 'rb') as f:
                 for _i in range(0, slot_id + 1):
                     secret = f.read(32)
 
@@ -308,9 +311,9 @@ class DefaultSecurityModule(SecurityModule):
         key = self._get_secret(slot_id)
         # convert input to ascii, so we can securely append bin data
         input_data = binascii.b2a_hex(data)
-        input_data += u"\x01\x02"
+        input_data += b"\x01\x02"
         padding = (16 - len(input_data) % 16) % 16
-        input_data += padding * "\0"
+        input_data += padding * b"\0"
         aes = AES.new(key, AES.MODE_CBC, iv)
 
         res = aes.encrypt(input_data)
@@ -394,7 +397,7 @@ class DefaultSecurityModule(SecurityModule):
         key = self._get_secret(slot_id)
         aes = AES.new(key, AES.MODE_CBC, iv)
         output = aes.decrypt(input_data)
-        eof = output.rfind(u"\x01\x02")
+        eof = output.rfind(b"\x01\x02")
         if eof >= 0:
             output = output[:eof]
 

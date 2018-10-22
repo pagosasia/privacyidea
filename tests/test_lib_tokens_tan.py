@@ -3,6 +3,7 @@ This test file tests the lib.tokens.papertoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.tantoken import TanTokenClass
 from privacyidea.lib.token import init_token, get_tokens_paginate, import_token

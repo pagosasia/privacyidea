@@ -3,6 +3,7 @@ This file contains the tests for the periodic tasks API.
 
 This tests api/periodictask.py
 """
+from __future__ import absolute_import
 import json
 from contextlib import contextmanager
 import mock

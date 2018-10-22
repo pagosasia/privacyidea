@@ -285,7 +285,7 @@ def create(directory="/var/lib/privacyidea/backup/",
 
     call(backup_call)
     os.unlink(sqlfile)
-    os.chmod(backup_file, 0600)
+    os.chmod(backup_file, 0o0600)
 
 
 def _write_mysql_defaults(filename, username, password):
@@ -302,7 +302,7 @@ def _write_mysql_defaults(filename, username, password):
 user={0!s}
 password={1!s}""".format(username, password))
 
-    os.chmod(filename, 0600)
+    os.chmod(filename, 0o0600)
     # set correct owner, if possible
     if os.geteuid() == 0:
         directory_stat = os.stat(os.path.dirname(filename))
@@ -430,7 +430,7 @@ def create_enckey():
         f.write(DefaultSecurityModule.random(96))
 
     print("Encryption key written to %s" % filename)
-    os.chmod(filename, 0400)
+    os.chmod(filename, 0o0400)
     print("The file permission of %s was set to 400!" % filename)
     print("Please ensure, that it is owned by the right user.   ")
 
@@ -477,7 +477,7 @@ def create_audit_keys(keysize=2048):
 
     print("Signing keys written to %s and %s" %
           (filename, app.config.get("PI_AUDIT_KEY_PUBLIC")))
-    os.chmod(filename, 0400)
+    os.chmod(filename, 0o0400)
     print("The file permission of %s was set to 400!" % filename)
     print("Please ensure, that it is owned by the right user.")
 

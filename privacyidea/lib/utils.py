@@ -26,14 +26,19 @@ This is the library with base functions for privacyIDEA.
 
 This module is tested in tests/test_lib_utils.py
 """
+
+from __future__ import absolute_import
+import six
+
 import logging
-log = logging.getLogger(__name__)
+from six.moves import range
+from six.moves import zip
 import binascii
 import base64
 import qrcode
-import urlparse
-import StringIO
-import urllib
+from six.moves.urllib.parse import urlparse, urlunparse
+from io import BytesIO
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 from privacyidea.lib.crypto import urandom, geturandom
 from privacyidea.lib.error import ParameterError
 import string
@@ -50,6 +55,7 @@ import os
 import time
 from base64 import (b64decode, b64encode)
 
+log = logging.getLogger(__name__)
 
 try:
     import bcrypt
@@ -159,10 +165,10 @@ def to_unicode(s, encoding="utf-8"):
     """
     converts a value to unicode if it is of type str.
     
-    :param s: The utf-8 encoded str 
+    :param s: The utf-8 encoded (byte)string
     :return: unicode string
     """
-    if type(s) == str:
+    if type(s) == str or type(s) == bytes:
         s = s.decode(encoding)
     return s
 
@@ -183,7 +189,7 @@ def generate_otpkey(key_size=20):
 def create_png(data, alt=None):
     img = qrcode.make(data)
 
-    output = StringIO.StringIO()
+    output = BytesIO()
     img.save(output)
     o_data = output.getvalue()
     output.close()
@@ -212,13 +218,14 @@ def create_img(data, width=0, alt=None, raw=False):
         o_data = create_png(data, alt=alt)
     else:
         o_data = data
-    data_uri = o_data.encode("base64").replace("\n", "")
+    data_uri = binascii.b2a_base64(o_data).replace(b"\n", b"").decode('utf8')
+#    data_uri = o_data.encode("base64").replace("\n", "")
 
     if width != 0:
         width_str = " width={0:d} ".format((int(width)))
 
     if alt is not None:
-        val = urllib.urlencode({'alt': alt})
+        val = six.moves.urllib.parse.urlencode({'alt': alt})
         alt_str = " alt={0!r} ".format((val[len('alt='):]))
 
     ret_img = 'data:image/png;base64,{0!s}'.format(data_uri)
@@ -244,8 +251,8 @@ def generate_password(size=6, characters=string.ascii_lowercase +
 hexHexChars = '0123456789abcdef'
 modHexChars = 'cbdefghijklnrtuv'
 
-hex2ModDict = dict(zip(hexHexChars, modHexChars))
-mod2HexDict = dict(zip(modHexChars, hexHexChars))
+hex2ModDict = dict(list(zip(hexHexChars, modHexChars)))
+mod2HexDict = dict(list(zip(modHexChars, hexHexChars)))
 
 
 def modhex_encode(s):
@@ -378,7 +385,7 @@ def get_data_from_params(params, exclude_params, config_description, module,
             _missing = True
     if _missing:
         raise Exception("type or description without necessary data! {0!s}".format(
-                        unicode(params)))
+                        six.text_type(params)))
 
     return data, types, desc
 
@@ -572,7 +579,7 @@ def reload_db(timestamp, db_ts):
     :return: bool
     """
     rdb = False
-    internal_timestamp = None
+    internal_timestamp = ''
     if timestamp:
         internal_timestamp = timestamp.strftime("%s")
     rdb = False
@@ -1090,10 +1097,10 @@ def convert_column_to_unicode(value):
     Otherwise, convert it to a unicode object.
     :return: a unicode object or None
     """
-    if value is None or isinstance(value, unicode):
+    if value is None or isinstance(value, six.text_type):
         return value
     else:
-        return unicode(value)
+        return six.text_type(value)
 
 
 def convert_timestamp_to_utc(timestamp):
@@ -1114,7 +1121,7 @@ def censor_connect_string(connect_string):
     In case any error occurs, return "<error when censoring connect string>"
     """
     try:
-        parsed = urlparse.urlparse(connect_string)
+        parsed = urlparse(connect_string)
         if parsed.password is not None:
             # We need to censor the ``netloc`` attribute: user:pass@host
             _, host = parsed.netloc.rsplit("@", 1)
@@ -1122,7 +1129,7 @@ def censor_connect_string(connect_string):
             # Convert the URL to six components. netloc is component #1.
             splitted = list(parsed)
             splitted[1] = new_netloc
-            return urlparse.urlunparse(splitted)
+            return urlunparse(splitted)
         return connect_string
     except Exception:
         return "<error when censoring connect string>"

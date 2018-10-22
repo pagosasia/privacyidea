@@ -3,6 +3,7 @@
 This tests the files
   lib/task/simplestats.py
 """
+from __future__ import absolute_import
 from privacyidea.lib.user import User
 from privacyidea.lib.tokenclass import TOKENKIND
 from privacyidea.lib.token import init_token

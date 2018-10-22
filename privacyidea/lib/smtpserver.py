@@ -17,6 +17,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 from privacyidea.models import SMTPServer as SMTPServerDB
 from privacyidea.lib.crypto import (decryptPassword, encryptPassword,
                                     FAILED_TO_DECRYPT_PASSWORD)

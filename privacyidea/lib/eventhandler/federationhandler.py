@@ -20,6 +20,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the event handler module for privacyIDEA federations.
 Requests can be forwarded to other privacyIDEA servers.
 """

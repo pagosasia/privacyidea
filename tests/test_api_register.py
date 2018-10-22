@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from privacyidea.lib.resolver import save_resolver
 from privacyidea.lib.realm import set_realm
 from .base import MyTestCase
@@ -6,7 +7,7 @@ from privacyidea.lib.policy import SCOPE, ACTION, set_policy
 from privacyidea.lib.resolvers.SQLIdResolver import IdResolver as SQLResolver
 import json
 from privacyidea.lib.smtpserver import add_smtpserver
-import smtpmock
+from . import smtpmock
 from privacyidea.lib.config import set_privacyidea_config
 from privacyidea.lib.passwordreset import create_recoverycode
 from privacyidea.lib.user import User

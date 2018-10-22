@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """
 The OCRA class provides an OCRA object, that can handle all OCRA tasks and
 do all calculations.

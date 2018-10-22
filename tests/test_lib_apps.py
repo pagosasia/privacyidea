@@ -3,6 +3,7 @@
 This tests the file lib.apps, which contains functions to create
 the URLs for the smartphone enrollment
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 
 from privacyidea.lib.apps import (create_google_authenticator_url,

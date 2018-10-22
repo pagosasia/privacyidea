@@ -41,6 +41,7 @@ policy decorators for the API (pre/post) are defined in api/lib/policy
 
 The functions of this module are tested in tests/test_lib_policy_decorator.py
 """
+from __future__ import absolute_import
 import logging
 from privacyidea.lib.error import PolicyError, privacyIDEAError
 import functools

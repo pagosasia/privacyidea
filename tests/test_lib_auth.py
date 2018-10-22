@@ -3,6 +3,7 @@ This tests the files
   lib/auth.py and
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.auth import (create_db_admin, verify_db_admin,
                                   list_db_admin, delete_db_admin,

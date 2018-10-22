@@ -23,6 +23,7 @@
 """
 This module is used to modify counters in the database
 """
+from __future__ import absolute_import
 from privacyidea.models import EventCounter
 
 

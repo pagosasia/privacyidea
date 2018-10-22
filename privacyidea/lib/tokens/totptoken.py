@@ -35,6 +35,7 @@ It depends on the DB model, and the lib.tokenclass.
 TOTP is defined in https://tools.ietf.org/html/rfc6238
 """
 
+from __future__ import absolute_import
 import logging
 import time
 import math
@@ -48,6 +49,7 @@ from privacyidea.lib.decorators import check_token_locked
 from privacyidea.lib.policy import ACTION, SCOPE
 from privacyidea.lib.auth import ROLE
 from privacyidea.lib import _
+from six.moves import range
 
 optional = True
 required = False

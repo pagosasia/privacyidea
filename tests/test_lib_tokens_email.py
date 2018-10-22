@@ -1,6 +1,7 @@
 """
 This test file tests the lib.tokens.smstoken
 """
+from __future__ import absolute_import
 PWFILE = "tests/testdata/passwords"
 TEMPLATE_FILE = "tests/testdata/emailtemplate.html"
 
@@ -19,7 +20,7 @@ from privacyidea.lib.smtpserver import add_smtpserver, delete_smtpserver
 from privacyidea.lib import _
 import datetime
 from dateutil.tz import tzlocal
-import smtpmock
+from . import smtpmock
 import mock
 
 

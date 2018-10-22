@@ -22,6 +22,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 from privacyidea.models import EventHandler, EventHandlerOption, db
 from privacyidea.lib.error import ParameterError
 from privacyidea.lib.audit import getAudit

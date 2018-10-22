@@ -19,6 +19,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the REST API for managing CA connector definitions.
 The CA connectors are written to the database table "caconnector".
 

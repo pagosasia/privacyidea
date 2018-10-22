@@ -19,6 +19,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """Save and list client application information.
 Client Application information was saved during authentication requests.
 
@@ -27,7 +28,7 @@ The code is tested in tests/test_lib_clientapplication.py.
 
 import logging
 import datetime
-from log import log_with
+from .log import log_with
 from ..models import ClientApplication, Subscription
 from netaddr import IPAddress
 

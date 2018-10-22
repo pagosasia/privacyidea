@@ -5,7 +5,8 @@ lib/eventhandler/usernotification.py (one event handler module)
 lib/event.py (the decorator)
 """
 
-import smtpmock
+from __future__ import absolute_import
+from . import smtpmock
 import responses
 from .base import MyTestCase, FakeFlaskG, FakeAudit
 from privacyidea.lib.eventhandler.usernotification import (

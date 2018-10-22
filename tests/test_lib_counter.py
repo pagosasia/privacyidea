@@ -3,9 +3,11 @@ This tests the files
   lib/counter.py
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.counter import increase, decrease, reset, read
 from privacyidea.models import EventCounter
+from six.moves import range
 
 
 class CounterTestCase(MyTestCase):

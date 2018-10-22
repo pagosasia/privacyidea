@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+import six
 __doc__ = """The questionnaire token is a challenge response token.
 The user can define a set of answers to questions. Within the challenge the
 user is asked one of these questions and can respond with the corresponding
@@ -136,7 +138,7 @@ class QuestionnaireTokenClass(TokenClass):
             raise TokenAdminError(_("You need to provide at least %s "
                                     "answers.") % num_answers)
         # Save all questions and answers and encrypt them
-        for question, answer in questions.iteritems():
+        for question, answer in six.iteritems(questions):
             self.add_tokeninfo(question, answer, value_type="password")
         TokenClass.update(self, param)
 
@@ -188,7 +190,7 @@ class QuestionnaireTokenClass(TokenClass):
         # Get a random question
         questions = []
         tinfo = self.get_tokeninfo()
-        for question, answer in tinfo.iteritems():
+        for question, answer in six.iteritems(tinfo):
             if question.endswith(".type") and answer == "password":
                 # This is "Question1?.type" of type "password"
                 # So this is actually a question and we add the question to

@@ -3,6 +3,7 @@ This test file tests the lib.tokenclass
 
 The lib.tokenclass depends on the DB model and lib.user
 """
+from __future__ import absolute_import
 PWFILE = "tests/testdata/passwords"
 
 from .base import MyTestCase

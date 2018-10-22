@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import os.path
 import logging
@@ -112,12 +114,12 @@ def create_app(config_name="development",
     :rtype: App object
     """
     if not silent:
-        print("The configuration name is: {0!s}".format(config_name))
+        print(("The configuration name is: {0!s}".format(config_name)))
     if os.environ.get(ENV_KEY):
         config_file = os.environ[ENV_KEY]
     if not silent:
-        print("Additional configuration can be read from the file {0!s}".format(
-              config_file))
+        print(("Additional configuration can be read from the file {0!s}".format(
+              config_file)))
     app = Flask(__name__, static_folder="static",
                 template_folder="static/templates")
     if config_name:
@@ -179,7 +181,7 @@ def create_app(config_name="development",
         if os.path.isfile(log_config_file):
             logging.config.fileConfig(log_config_file)
             if not silent:
-                print("Reading Logging settings from {0!s}".format(log_config_file))
+                print(("Reading Logging settings from {0!s}".format(log_config_file)))
         else:
             raise Exception("The config file specified in PI_LOGCONFIG does "
                             "not exist.")

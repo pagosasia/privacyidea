@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from privacyidea.models import MonitoringStats
 from privacyidea.lib.monitoringstats import (write_stats, delete_stats,
                                              get_stats_keys, get_values,

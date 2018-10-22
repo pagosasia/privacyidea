@@ -3,6 +3,7 @@ This test case test the REST API
 api/applications.py
 """
 
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 
@@ -17,6 +18,6 @@ class APIApplicationsResolverTestCase(MyTestCase):
             result = json.loads(res.data).get("result")
             detail = json.loads(res.data).get("detail")
             value = result.get("value")
-            self.assertTrue("ssh" in value.keys())
-            self.assertTrue("luks" in value.keys())
+            self.assertTrue("ssh" in list(value.keys()))
+            self.assertTrue("luks" in list(value.keys()))
             self.assertTrue(value["ssh"]["options"]["optional"] == ["user"])

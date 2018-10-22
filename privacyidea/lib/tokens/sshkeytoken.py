@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__="""The SSHKeyTokenClass provides a TokenClass that stores the public
 SSH key and can give the public SSH key via the getotp function.
 This can be used to manage SSH keys and retrieve the public ssh key

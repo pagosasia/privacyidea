@@ -36,10 +36,11 @@ database. It depends on the lib.resolver.
 It is independent of any user or token libraries and can be tested standalone
 in tests/test_lib_realm.py
 '''
+from __future__ import absolute_import
 from ..models import (Realm,
                       ResolverRealm,
                       Resolver, db, save_config_timestamp)
-from log import log_with
+from .log import log_with
 from flask import g
 from privacyidea.lib.config import ConfigClass
 import logging

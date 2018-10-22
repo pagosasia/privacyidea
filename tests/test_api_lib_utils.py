@@ -2,6 +2,7 @@
 """
 This tests the file api.lib.utils
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 
 from privacyidea.api.lib.utils import (getParam)

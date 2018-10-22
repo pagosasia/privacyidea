@@ -31,6 +31,7 @@ This file contains the definition of the CertificateToken class.
 The code is tested in test_lib_tokens_certificate.py.
 """
 
+from __future__ import absolute_import
 import logging
 from privacyidea.lib.tokenclass import TokenClass
 from privacyidea.lib.log import log_with

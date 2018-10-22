@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This is the Web Form for creating the certificate request with
 the web form in the browser.
 

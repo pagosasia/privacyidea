@@ -16,6 +16,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 import logging
 from privacyidea.lib.task.base import BaseTask
 from privacyidea.lib.monitoringstats import write_stats

@@ -1,4 +1,5 @@
-from urllib import urlencode
+from __future__ import absolute_import
+from six.moves.urllib.parse import urlencode
 import json
 from .base import MyTestCase
 from privacyidea.lib.user import (User)

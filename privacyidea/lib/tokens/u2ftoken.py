@@ -27,6 +27,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 from privacyidea.api.lib.utils import getParam
 from privacyidea.lib.config import get_from_config
 from privacyidea.lib.tokenclass import TokenClass

@@ -2,6 +2,7 @@
 This test file tests the lib/machine.py for attaching and detaching tokens
 """
 
+from __future__ import absolute_import
 HOSTSFILE = "tests/testdata/hosts"
 from .base import MyTestCase
 from privacyidea.lib.machine import (attach_token, detach_token, add_option,

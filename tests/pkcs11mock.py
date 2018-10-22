@@ -22,8 +22,10 @@
 """
 Mock module for testing the handling of hardware security modules
 """
+from __future__ import absolute_import
 import sys
 import mock
+from six.moves import range
 
 try:
     import PyKCS11

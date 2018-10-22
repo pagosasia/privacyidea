@@ -1,6 +1,7 @@
 """
 This test file tests the lib.clientapplicaton.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from datetime import datetime
 from privacyidea.lib.clientapplication import (get_clientapplication,

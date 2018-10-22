@@ -27,6 +27,7 @@ These gateway definitions are written to the database table "smsgateway" and
 
 The code of this module is tested in tests/test_api_smsgateway.py
 """
+from __future__ import absolute_import
 from flask import (Blueprint,
                    request)
 from .lib.utils import getParam, send_result
@@ -41,6 +42,7 @@ from privacyidea.lib.smsprovider.SMSProvider import (SMS_PROVIDERS,
                                                      delete_smsgateway_option,
                                                      delete_smsgateway,
                                                      get_sms_provider_class)
+import six
 
 log = logging.getLogger(__name__)
 
@@ -95,7 +97,7 @@ def set_gateway():
     providermodule = getParam(param, "module", optional=False)
     description = getParam(param, "description", optional=True)
     options = {}
-    for k, v in param.iteritems():
+    for k, v in six.iteritems(param):
         if k.startswith("option."):
             options[k[7:]] = v
 

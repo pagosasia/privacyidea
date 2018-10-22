@@ -28,6 +28,7 @@ It depends on the database model models.py and on the machineresolver
 lib/machineresolver.py, so this can be tested standalone without realms,
 tokens and webservice!
 """
+from __future__ import absolute_import
 from .machineresolver import get_resolver_list, get_resolver_object
 from privacyidea.models import Token
 from privacyidea.models import (MachineToken, db, MachineTokenOptions,

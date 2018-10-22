@@ -1,13 +1,14 @@
 """
 This test tests the authmodules/Apache2/privacyidea_apache.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from authmodules.apache2.privacyidea_apache import (OK, UNAUTHORIZED,
                                                     check_password,
                                                     ROUNDS, SALT_SIZE)
 import responses
 import json
-import redismock
+from . import redismock
 import passlib.hash
 
 

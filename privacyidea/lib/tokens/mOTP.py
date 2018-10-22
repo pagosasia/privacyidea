@@ -31,6 +31,7 @@
       https://github.com/neush/otpn900/blob/master/src/test_motp.c
 '''
 
+from __future__ import absolute_import
 import logging
 import time
 
@@ -38,6 +39,8 @@ from hashlib import md5
 
 from privacyidea.lib.crypto import zerome
 from privacyidea.lib.log import log_with
+import six
+from six.moves import range
 
 
 log = logging.getLogger(__name__)
@@ -107,8 +110,8 @@ class mTimeOtp(object):
 
 
         for i in range(otime - window, otime + window):
-            otp = unicode(self.calcOtp(i, key, pin))
-            if unicode(anOtpVal) == otp:
+            otp = six.text_type(self.calcOtp(i, key, pin))
+            if six.text_type(anOtpVal) == otp:
                 res = i
                 log.debug("otpvalue {0!r} found at: {1!r}".format(anOtpVal, res))
                 break

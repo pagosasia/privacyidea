@@ -20,6 +20,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This module provides the PIN Handling base class.
 In case of enrolling a token, a PIN Handling class can be used to
 send the PIN via Email, call an external program or print a letter.

@@ -5,6 +5,8 @@ This tests the files
   lib/auditmodules/sqlaudit.py
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 from .base import MyTestCase
 from privacyidea.lib.audit import getAudit, search
 from privacyidea.lib.auditmodules.sqlaudit import column_length

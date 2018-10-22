@@ -37,6 +37,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
+import six
 __doc__ = """This module contains the REST API for doing authentication.
 The methods are tested in the file tests/test_api_validate.py
 
@@ -447,7 +449,7 @@ def samlcheck():
                                         "phone": ui.get("phone")
                                         }
             # additional attributes
-            for k, v in ui.iteritems():
+            for k, v in six.iteritems(ui):
                 result_obj["attributes"][k] = v
 
     g.audit_object.log({"info": details.get("message"),

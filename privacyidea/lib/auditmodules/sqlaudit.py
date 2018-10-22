@@ -21,6 +21,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
+import six
 __doc__ = """The SQL Audit Module is used to write audit entries to an SQL
 database.
 The SQL Audit Module is configured like this:
@@ -129,10 +131,10 @@ class Audit(AuditBase):
         Truncate self.audit_data according to the column_length.
         :return: None
         """
-        for column, l in column_length.iteritems():
+        for column, l in six.iteritems(column_length):
             if column in self.audit_data:
                 data = self.audit_data[column]
-                if isinstance(data, basestring):
+                if isinstance(data, six.string_types):
                     data = data[:l]
                 self.audit_data[column] = data
 
@@ -210,7 +212,7 @@ class Audit(AuditBase):
         :type param: dict
         :return: None
         """
-        for k, v in param.items():
+        for k, v in six.iteritems(param):
             self.audit_data[k] = v
 
     def add_to_log(self, param):
@@ -219,7 +221,7 @@ class Audit(AuditBase):
         :param param:
         :return:
         """
-        for k, v in param.items():
+        for k, v in six.iteritems(param):
             self.audit_data[k] += v
 
     def finalize_log(self):
@@ -339,7 +341,7 @@ class Audit(AuditBase):
                                                   le.client,
                                                   le.loglevel,
                                                   le.clearance_level)
-        if type(s) == unicode:
+        if type(s) == six.text_type:
             s = s.encode("utf-8")
         return s
 
@@ -381,7 +383,7 @@ class Audit(AuditBase):
 
         for le in logentries:
             audit_dict = self.audit_entry_to_dict(le)
-            audit_list = audit_dict.values()
+            audit_list = list(audit_dict.values())
             string_list = [u"'{0!s}'".format(x) for x in audit_list]
             yield ",".join(string_list)+"\n"
 
@@ -424,11 +426,11 @@ class Audit(AuditBase):
                                       page=page, sortorder=sortorder,
                                       timelimit=timelimit)
         try:
-            le = auditIter.next()
+            le = next(auditIter)
             while le:
                 # Fill the list
                 paging_object.auditdata.append(self.audit_entry_to_dict(le))
-                le = auditIter.next()
+                le = next(auditIter)
         except StopIteration:
             log.debug("Interation stopped.")
 

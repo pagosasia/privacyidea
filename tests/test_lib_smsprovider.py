@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-__doc__="""
+"""
 This test file tests the modules:
  lib.smsprovider.httpsmsprovider
  lib.smsprovider.sipgateprovider
  lib.smsprovider.smtpsmsprovider
  lib.smsprovider.smppsmsprovider
 """
+from __future__ import absolute_import
 
 from .base import MyTestCase
 from privacyidea.lib.smsprovider.HttpSMSProvider import HttpSMSProvider
@@ -22,8 +23,8 @@ from privacyidea.lib.smsprovider.SMSProvider import (SMSError,
                                                      create_sms_instance)
 from privacyidea.lib.smtpserver import add_smtpserver
 import responses
-import smtpmock
-import smppmock
+from . import smtpmock
+from . import smppmock
 
 
 class SMSTestCase(MyTestCase):

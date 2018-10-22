@@ -31,6 +31,7 @@
   Description:  HOTP basic functions
 """
   
+from __future__ import absolute_import
 import hmac
 import logging
 import struct
@@ -40,6 +41,8 @@ from hashlib import sha1
 from privacyidea.lib.log import log_with
 
 import sys
+import six
+from six.moves import range
 (ma, mi, _, _, _,) = sys.version_info
 pver = float(int(ma) + int(mi) * 0.1)
 
@@ -79,7 +82,7 @@ class HmacOtp(object):
             data_input = binascii.unhexlify(challenge)
 
         if key is None:
-            dig = str(self.secretObj.hmac_digest(data_input, self.hashfunc))
+            dig = self.secretObj.hmac_digest(data_input, self.hashfunc)
         else:
             if pver > 2.6:
                 dig = hmac.new(key, data_input, self.hashfunc).digest()
@@ -89,12 +92,13 @@ class HmacOtp(object):
         return dig
 
     def truncate(self, digest):
-        offset = ord(digest[-1:]) & 0x0f
+        digest = bytearray(digest)
+        offset = digest[-1] & 0x0f
 
-        binary = (ord(digest[offset + 0]) & 0x7f) << 24
-        binary |= (ord(digest[offset + 1]) & 0xff) << 16
-        binary |= (ord(digest[offset + 2]) & 0xff) << 8
-        binary |= (ord(digest[offset + 3]) & 0xff)
+        binary = (digest[offset + 0] & 0x7f) << 24
+        binary |= (digest[offset + 1] & 0xff) << 16
+        binary |= (digest[offset + 2] & 0xff) << 8
+        binary |= (digest[offset + 3] & 0xff)
 
         return binary % (10 ** self.digits)
 
@@ -147,7 +151,7 @@ class HmacOtp(object):
             otpval = self.generate(c)
             #log.debug("calculating counter {0!r}".format(c))
 
-            if unicode(otpval) == unicode(anOtpVal):
+            if six.text_type(otpval) == six.text_type(anOtpVal):
                 res = c
                 break
         # return -1 or the counter

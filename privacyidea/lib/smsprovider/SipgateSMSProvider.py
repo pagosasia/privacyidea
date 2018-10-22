@@ -23,6 +23,7 @@
 #
 #
 #
+from __future__ import absolute_import
 __doc__="""This module provides sending SMS via sipgate
 
 The code is tested in tests/test_lib_smsprovider

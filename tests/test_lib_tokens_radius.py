@@ -3,12 +3,13 @@ This test file tests the lib.tokens.radiustoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.radiustoken import RadiusTokenClass
 from privacyidea.models import Token
 from privacyidea.lib.error import ParameterError
 from privacyidea.lib.config import set_privacyidea_config
-import radiusmock
+from . import radiusmock
 from privacyidea.lib.token import init_token
 from privacyidea.lib.radiusserver import add_radius
 

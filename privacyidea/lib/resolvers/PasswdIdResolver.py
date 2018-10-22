@@ -41,13 +41,15 @@
   Dependencies: -
 """
 
+from __future__ import absolute_import
 import re
 import os
 import logging
 import crypt
 import codecs
 
-from UserIdResolver import UserIdResolver
+from .UserIdResolver import UserIdResolver
+import six
 
 log = logging.getLogger(__name__)
 ENCODING = "utf-8"
@@ -194,7 +196,7 @@ class IdResolver (UserIdResolver):
         :rtype: bool
         """
         log.info("checking password for user uid {0!s}".format(uid))
-        if isinstance(password, unicode):
+        if isinstance(password, six.text_type):
             password = password.encode(ENCODING)
         cryptedpasswd = self.passDict[uid]
         log.debug("We found the crypted pass {0!s} for uid {1!s}".format(cryptedpasswd, uid))
@@ -265,7 +267,7 @@ class IdResolver (UserIdResolver):
         """
         # We do not encode the LoginName anymore, as we are
         # storing unicode in nameDict now.
-        if LoginName in self.nameDict.keys():
+        if LoginName in list(self.nameDict.keys()):
             return self.nameDict[LoginName]
         else:
             return ""
@@ -364,20 +366,20 @@ class IdResolver (UserIdResolver):
         ret = False
         e = s = ""
 
-        if type(cString) == unicode:
+        if type(cString) == six.text_type:
             cString = cString.encode(ENCODING)
 
-        if type(cPattern) == unicode:
+        if type(cPattern) == six.text_type:
             cPattern = cPattern.encode(ENCODING)
 
         string = cString.lower()
         pattern = cPattern.lower()
 
-        if pattern.startswith("*"):
+        if pattern.startswith(b"*"):
             e = "e"
             pattern = pattern[1:]
 
-        if pattern.endswith("*"):
+        if pattern.endswith(b"*"):
             s = "s"
             pattern = pattern[:-1]
 

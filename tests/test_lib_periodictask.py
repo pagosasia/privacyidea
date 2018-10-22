@@ -4,6 +4,7 @@ This file contains the tests for periodic tasks.
 In particular, this tests
 lib/periodictask.py
 """
+from __future__ import absolute_import
 from datetime import datetime, timedelta
 
 from dateutil.parser import parse as parse_timestamp

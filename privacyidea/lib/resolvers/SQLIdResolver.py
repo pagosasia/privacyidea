@@ -23,6 +23,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+import six
 __doc__ = """This is the resolver to find users in SQL databases.
 
 The file is tested in tests/test_lib_resolver.py
@@ -33,7 +35,7 @@ import yaml
 import binascii
 import re
 
-from UserIdResolver import UserIdResolver
+from .UserIdResolver import UserIdResolver
 
 from sqlalchemy import and_
 from sqlalchemy import create_engine
@@ -158,7 +160,7 @@ class IdResolver (UserIdResolver):
 
         res = False
         userinfo = self.getUserInfo(uid)
-        if isinstance(password, unicode):
+        if isinstance(password, six.text_type):
             password = password.encode(self.encoding)
 
         database_pw = userinfo.get("password", "XXXXXXX")
@@ -213,7 +215,7 @@ class IdResolver (UserIdResolver):
             result = self.session.query(self.TABLE).filter(filter_condition)
 
             for r in result:
-                if userinfo.keys():  # pragma: no cover
+                if list(userinfo.keys()):  # pragma: no cover
                     raise Exception("More than one user with userid {0!s} found!".format(userId))
                 userinfo = self._get_user_from_mapped_object(r)
         except Exception as exx:  # pragma: no cover
@@ -334,12 +336,12 @@ class IdResolver (UserIdResolver):
         """
         # Take the following parts, join them with the NULL byte and return
         # the hexlified SHA-1 digest
-        id_parts = (to_utf8(self.connect_string),
+        id_parts = (str(self.connect_string),
                     str(self.pool_size),
                     str(self.pool_recycle),
                     str(self.pool_timeout))
-        resolver_id = binascii.hexlify(hashlib.sha1("\x00".join(id_parts)).digest())
-        return "sql." + resolver_id
+        resolver_id = binascii.hexlify(hashlib.sha1("\x00".join(id_parts).encode('utf8')).digest())
+        return "sql." + str(resolver_id)
 
     @staticmethod
     def getResolverClassType():

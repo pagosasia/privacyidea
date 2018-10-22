@@ -3,6 +3,7 @@ This test file tests the lib.tokens.spasstoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.spasstoken import SpassTokenClass
 from privacyidea.models import Token

@@ -23,6 +23,7 @@ This endpoint is used fetch monitoring/statistics data
 
 The code of this module is tested in tests/test_api_monitoring.py
 """
+from __future__ import absolute_import
 from flask import (Blueprint,
                    request)
 from .lib.utils import getParam, send_result

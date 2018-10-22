@@ -16,4 +16,5 @@ But you need to have working resolver.py and realm.py to be able to
 work with user.py
 """
 
+from __future__ import absolute_import
 from flask_babel import gettext as _

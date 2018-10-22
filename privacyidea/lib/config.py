@@ -25,6 +25,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+import six
 __doc__="""The config module takes care about storing server configuration in
 the Config database table.
 
@@ -82,14 +84,13 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class ConfigClass(object):
+class ConfigClass(six.with_metaclass(Singleton, object)):
     """
     The Config_Object will contain all database configuration of system
     config, resolvers and realm.
     It will be created at the beginning of the request and is supposed to stay
     alive unchanged during the request.
     """
-    __metaclass__ = Singleton
 
     def __init__(self):
         """
@@ -172,13 +173,13 @@ class ConfigClass(object):
 
         # reduce the dictionary to only public keys!
         reduced_config = {}
-        for ckey, cvalue in self.config.iteritems():
+        for ckey, cvalue in six.iteritems(self.config):
             if role == "admin" or cvalue.get("Type") == "public":
                 reduced_config[ckey] = self.config[ckey]
         if not reduced_config and role=="admin":
             reduced_config = self.config
 
-        for ckey, cvalue in reduced_config.iteritems():
+        for ckey, cvalue in six.iteritems(reduced_config):
             if cvalue.get("Type") == "password":
                 # decrypt the password
                 r_config[ckey] = decryptPassword(cvalue.get("Value"), convert_unicode=True)
@@ -198,7 +199,7 @@ class ConfigClass(object):
                 pass
             if isinstance(r_config, int):
                 r_config = r_config > 0
-            if isinstance(r_config, basestring):
+            if isinstance(r_config, six.string_types):
                 r_config = is_true(r_config.lower())
 
         return r_config
@@ -252,7 +253,7 @@ def get_resolver_types():
         this.config["pi_resolver_classes"] = r_classes
         this.config["pi_resolver_types"] = r_types
 
-    return this.config["pi_resolver_types"].values()
+    return list(this.config["pi_resolver_types"].values())
 
 
 def get_caconnector_types():
@@ -279,7 +280,7 @@ def get_resolver_classes():
         this.config["pi_resolver_types"] = r_types
         this.config["pi_resolver_classes"] = r_classes
 
-    return this.config["pi_resolver_classes"].values()
+    return list(this.config["pi_resolver_classes"].values())
 
 
 #@cache.cached(key_prefix="classes")
@@ -355,7 +356,7 @@ def get_token_types():
         this.config["pi_token_types"] = t_types
         this.config["pi_token_classes"] = t_classes
 
-    return this.config["pi_token_types"].values()
+    return list(this.config["pi_token_types"].values())
 
 
 #@cache.cached(key_prefix="prefix")
@@ -397,7 +398,7 @@ def get_token_classes():
         this.config["pi_token_classes"] = t_classes
         this.config["pi_token_types"] = t_types
 
-    return this.config["pi_token_classes"].values()
+    return list(this.config["pi_token_classes"].values())
 
 
 def get_machine_resolver_class_dict():

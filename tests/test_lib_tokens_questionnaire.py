@@ -3,6 +3,7 @@ This test file tests the lib.tokens.questionnairetoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.questionnairetoken import QuestionnaireTokenClass
 from privacyidea.lib.token import init_token
@@ -60,7 +61,7 @@ class QuestionnaireTokenTestCase(MyTestCase):
         self.assertEqual(r[0], True)
         question = r[1]
         transactionid = r[2]
-        self.assertTrue(question in self.questions.keys())
+        self.assertTrue(question in list(self.questions.keys()))
 
         # Now that we have the question, we can give the answer
         r = token.check_challenge_response(passw=self.questions[question],

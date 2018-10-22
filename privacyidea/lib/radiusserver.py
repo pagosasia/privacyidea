@@ -19,6 +19,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 from privacyidea.models import RADIUSServer as RADIUSServerDB
 from privacyidea.lib.crypto import decryptPassword, encryptPassword
 from privacyidea.lib.config import get_from_config

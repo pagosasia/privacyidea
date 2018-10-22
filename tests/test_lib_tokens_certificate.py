@@ -2,6 +2,7 @@
 This test file tests the lib.tokens.certificatetoken
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.certificatetoken import CertificateTokenClass
 from privacyidea.models import Token

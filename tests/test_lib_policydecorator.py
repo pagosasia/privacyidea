@@ -3,6 +3,7 @@ This test file tests the lib.policy.py
 
 The lib.policy.py only depends on the database model.
 """
+from __future__ import absolute_import
 PWFILE2 = "tests/testdata/passwords"
 DICT_FILE = "tests/testdata/dictionary"
 
@@ -28,7 +29,7 @@ from privacyidea.lib.token import (init_token, remove_token, check_user_pass,
 from privacyidea.lib.error import UserError, PolicyError
 from privacyidea.lib.radiusserver import add_radius
 import datetime
-import radiusmock
+from . import radiusmock
 import binascii
 import hashlib
 from privacyidea.models import AuthCache

@@ -3,6 +3,7 @@ This test file tests the lib.tokens.yubicotoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.yubicotoken import (YubicoTokenClass, YUBICO_URL)
 from privacyidea.models import Token

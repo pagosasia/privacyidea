@@ -20,6 +20,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
 __doc__ = """This module provides the REST API for th password recovery for a
 user managed in privacyIDEA.
 

@@ -2,6 +2,7 @@
 """
 This test file tests the lib.crypto and lib.security.default
 """
+from __future__ import absolute_import
 from mock import call
 
 from privacyidea.lib.error import HSMException

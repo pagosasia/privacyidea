@@ -30,6 +30,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+import six
 __doc__ = """This is the implementation of the remote token. The remote token
 forwards an authentication request to another privacyidea server.
 
@@ -243,7 +245,7 @@ class RemoteTokenClass(TokenClass):
         ssl_verify = get_from_config("remote.verify_ssl_certificate",
                                      False, return_bool=True) or False
 
-        if type(ssl_verify) in [str, unicode]:
+        if type(ssl_verify) in [str, six.text_type]:
             ssl_verify = is_true(ssl_verify.lower())
 
         # here we also need to check for remote.user and so on....

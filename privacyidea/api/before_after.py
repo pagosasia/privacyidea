@@ -20,10 +20,12 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This module contains the before and after routines for all
 Flask endpoints.
 It also contains the error handlers.
 """
+import six
 
 from .lib.utils import (send_error, get_all_params)
 from ..lib.user import get_user_from_param
@@ -316,9 +318,9 @@ def privacyidea_error(error):
     These are not that critical exceptions.
     """
     if "audit_object" in g:
-        g.audit_object.log({"info": unicode(error)})
+        g.audit_object.log({"info": six.text_type(error)})
         g.audit_object.finalize_log()
-    return send_error(unicode(error), error_code=error.id), 400
+    return send_error(six.text_type(error), error_code=error.id), 400
 
 
 # other errors
@@ -344,6 +346,6 @@ def internal_error(error):
     occurs.
     """
     if "audit_object" in g:
-        g.audit_object.log({"info": unicode(error)})
+        g.audit_object.log({"info": six.text_type(error)})
         g.audit_object.finalize_log()
-    return send_error(unicode(error), error_code=-500), 500
+    return send_error(six.text_type(error), error_code=-500), 500

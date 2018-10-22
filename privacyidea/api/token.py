@@ -52,6 +52,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
 from flask import (Blueprint, request, g, current_app)
 from ..lib.log import log_with
 from .lib.utils import (optional,
@@ -902,7 +903,7 @@ def loadtokens_api(filename=None):
     g.audit_object.log({'info': u"{0!s}, {1!s} (imported: {2:d})".format(file_type,
                                                            token_file,
                                                            len(TOKENS)),
-                        'serial': ', '.join(TOKENS.keys())})
+                        'serial': ', '.join(list(TOKENS.keys()))})
     # logTokenNum()
 
     return send_result(len(TOKENS))

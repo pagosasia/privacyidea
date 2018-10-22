@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 from privacyidea.lib.monitoringstats import write_stats

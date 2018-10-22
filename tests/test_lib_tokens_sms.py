@@ -1,6 +1,7 @@
 """
 This test file tests the lib.tokens.smstoken
 """
+from __future__ import absolute_import
 PWFILE = "tests/testdata/passwords"
 
 from .base import MyTestCase, FakeFlaskG

@@ -28,6 +28,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """The realm endpoints are used to define realms.
 A realm groups together many users. Administrators can manage the tokens of
 the users in such a realm. Policies and tokens can be assigned to realms.

@@ -26,10 +26,12 @@ It is used by the lib.tokenclass
 The method is tested in test_lib_challenges
 """
 
+from __future__ import absolute_import
 import logging
-from log import log_with
+from .log import log_with
 from ..models import Challenge
 from datetime import datetime
+import six
 log = logging.getLogger(__name__)
 
 
@@ -84,7 +86,7 @@ def get_challenges_paginate(serial=None, transaction_id=None,
     sql_query = _create_challenge_query(serial=serial,
                                         transaction_id=transaction_id)
 
-    if type(sortby) in [str, unicode]:
+    if type(sortby) in [str, six.text_type]:
         # convert the string to a Challenge column
         cols = Challenge.__table__.columns
         sortby = cols.get(sortby)

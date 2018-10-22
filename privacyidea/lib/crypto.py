@@ -37,6 +37,7 @@ Security module functions are contained under lib/security/
 
 This lib.cryto is tested in tests/test_lib_crypto.py
 """
+from __future__ import absolute_import
 import hmac
 import logging
 from hashlib import sha256
@@ -53,6 +54,7 @@ from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 import os
 import base64
+from six.moves import range
 try:
     from Crypto.Signature import pkcs1_15
     SIGN_WITH_RSA = False
@@ -373,19 +375,17 @@ def decryptPin(cryptPin):
 
 @log_with(log, log_entry=False)
 def encrypt(data, iv, id=0):
-    '''
+    """
     encrypt a variable from the given input with an initialiation vector
 
-    :param input: buffer, which contains the value
-    :type  input: buffer of bytes
-    :param iv:    initilaitation vector
-    :type  iv:    buffer (20 bytes random)
-    :param id:    contains the id of which key of the keyset should be used
-    :type  id:    int
-    :return:      encryted buffer
-
-
-    '''
+    :param data: buffer, which contains the value
+    :type  data: buffer of bytes
+    :param iv:   initilaitation vector
+    :type  iv:   buffer (20 bytes random)
+    :param id:   contains the id of which key of the keyset should be used
+    :type  id:   int
+    :return:     encryted buffer
+    """
     hsm = _get_hsm()
     ret = hsm.encrypt(data, iv, id)
     return ret
@@ -610,7 +610,7 @@ class urandom(object):
             stop = start
             start = 0
         # see python definition of randrange
-        res = urandom.choice(range(start, stop, step))
+        res = urandom.choice(list(range(start, stop, step)))
         return res
 
 
@@ -724,7 +724,7 @@ class Sign(object):
         r = False
         try:
             RSAkey = RSA.importKey(self.public)
-            signature = long(signature)
+            signature = int(signature)
             if SIGN_WITH_RSA:
                 hashvalue = HashFunc.new(s).digest()
                 r = RSAkey.verify(hashvalue, (signature,))

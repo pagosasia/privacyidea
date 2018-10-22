@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from .base import MyTestCase
 import json
-import radiusmock
+from . import radiusmock
 from privacyidea.lib.config import set_privacyidea_config
 from privacyidea.lib.radiusserver import delete_radius
 DICT_FILE = "tests/testdata/dictionary"

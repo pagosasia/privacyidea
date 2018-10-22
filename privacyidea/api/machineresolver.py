@@ -26,6 +26,7 @@ hosts file or an Active Directory.
 
 The code of this module is tested in tests/test_api_machineresolver.py
 """
+from __future__ import absolute_import
 from flask import (Blueprint,
                    request)
 from .lib.utils import (getParam,

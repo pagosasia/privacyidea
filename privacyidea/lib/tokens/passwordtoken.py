@@ -18,6 +18,7 @@
 This file contains the definition of the password token class
 """
 
+from __future__ import absolute_import
 import logging
 from privacyidea.lib.crypto import zerome
 from privacyidea.lib.tokenclass import TokenClass

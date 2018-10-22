@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import logging
 basedir = os.path.abspath(os.path.dirname(__file__))

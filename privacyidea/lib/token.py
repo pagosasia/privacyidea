@@ -58,6 +58,7 @@ tokenclass implementations like lib.tokens.hotptoken)
 This is the middleware/glue between the HTTP API and the database
 """
 
+from __future__ import absolute_import
 import traceback
 import string
 import datetime
@@ -96,6 +97,8 @@ from privacyidea.lib.policydecorators import (libpolicy,
 from privacyidea.lib.tokenclass import DATE_FORMAT
 from privacyidea.lib.tokenclass import TOKENKIND
 from dateutil.tz import tzlocal
+import six
+from six.moves import range
 
 log = logging.getLogger(__name__)
 
@@ -260,8 +263,8 @@ def _create_token_query(tokentype=None, realm=None, assigned=None, user=None,
         if len(tokeninfo) != 1:
             raise privacyIDEAError("I can only create SQL filters from "
                                    "tokeninfo of length 1.")
-        sql_query = sql_query.filter(TokenInfo.Key == tokeninfo.keys()[0])
-        sql_query = sql_query.filter(TokenInfo.Value == tokeninfo.values()[0])
+        sql_query = sql_query.filter(TokenInfo.Key == list(tokeninfo.keys())[0])
+        sql_query = sql_query.filter(TokenInfo.Value == list(tokeninfo.values())[0])
         sql_query = sql_query.filter(TokenInfo.token_id == Token.id)
 
     return sql_query
@@ -401,7 +404,7 @@ def get_tokens_paginate(tokentype=None, realm=None, assigned=None, user=None,
                                 rollout_state=rollout_state,
                                 description=description, userid=userid)
 
-    if type(sortby) in [str, unicode]:
+    if type(sortby) in [str, six.text_type]:
         # convert the string to a Token column
         cols = Token.__table__.columns
         sortby = cols.get(sortby)
@@ -541,7 +544,7 @@ def get_realms_of_token(serial, only_first_realm=False):
     for tokenobject in tokenobject_list:
         realms = tokenobject.get_realms()
 
-    if realms > 1:
+    if len(realms) > 1:
         log.debug(
             "Token {0!s} in more than one realm: {1!s}".format(serial, realms))
 
@@ -1261,7 +1264,7 @@ def set_pin(serial, pin, user=None, encrypt_pin=False):
     :return: The number of PINs set (usually 1)
     :rtype: int
     """
-    if isinstance(user, basestring):
+    if isinstance(user, six.string_types):
         # check if by accident the wrong parameter (like PIN)
         # is put into the user attribute
         log.warning("Parameter user must not be a string: {0!r}".format(user))
@@ -1999,7 +2002,7 @@ def check_token_list(tokenobject_list, passw, user=None, options=None):
     # add the user to the options, so that every token, that get passed the
     # options can see the user
     options = options or {}
-    options = dict(options.items() + {'user': user}.items())
+    options = dict(list(options.items()) + list({'user': user}.items()))
 
     # if there has been one token in challenge mode, we only handle challenges
     challenge_response_token_list = []
@@ -2287,7 +2290,7 @@ def get_dynamic_policy_definitions(scope=None):
         policy = get_tokenclass_info(ttype, section='policy')
 
         # get all policy sections like: admin, user, enroll, auth, authz
-        pol_keys = pol.keys()
+        pol_keys = list(pol.keys())
 
         for pol_section in policy.keys():
             # if we have a dyn token definition of this section type
@@ -2308,14 +2311,14 @@ def get_dynamic_policy_definitions(scope=None):
         for pin_scope in pin_scopes:
             pol[pin_scope]['{0!s}_otp_pin_maxlength'.format(ttype.lower())] = {
                 'type': 'int',
-                'value': range(0, 32),
+                'value': list(range(0, 32)),
                 "desc": _("Set the maximum allowed PIN length of the {0!s}"
                           " token.").format(ttype.upper()),
                 'group': GROUP.PIN
             }
             pol[pin_scope]['{0!s}_otp_pin_minlength'.format(ttype.lower())] = {
                 'type': 'int',
-                'value': range(0, 32),
+                'value': list(range(0, 32)),
                 "desc": _("Set the minimum required PIN length of the {0!s}"
                           " token.").format(ttype.upper()),
                 'group': GROUP.PIN

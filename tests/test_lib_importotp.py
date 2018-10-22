@@ -5,6 +5,7 @@ This test file tests the lib.importotp
 """
 
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.importotp import (parseOATHcsv, parseYubicoCSV,
                                        parseSafeNetXML, ImportException,

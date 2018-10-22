@@ -2,6 +2,7 @@
 This test file tests the lib.caconnector.py and
 lib.caconnectors.localca.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 import os
 from privacyidea.lib.caconnectors.localca import LocalCAConnector, ATTR

@@ -3,6 +3,7 @@
 This test file tests the lib.tokens.tiqrtoken and lib.tokens.ocra
 This depends on lib.tokenclass
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.challenge import get_challenges
 from privacyidea.lib.tokens.tiqrtoken import TiqrTokenClass
@@ -14,8 +15,8 @@ from privacyidea.lib import _
 import re
 import binascii
 import hashlib
-from urlparse import urlparse
-from urllib import urlencode
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlencode
 import json
 from flask import Request, g
 from werkzeug.test import EnvironBuilder

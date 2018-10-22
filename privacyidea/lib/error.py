@@ -28,8 +28,10 @@
 contains Errors and Exceptions
 """
 
+from __future__ import absolute_import
 from privacyidea.lib import _
 import logging
+import six
 log = logging.getLogger(__name__)
 
 
@@ -70,13 +72,13 @@ class privacyIDEAError(Exception):
 
     def __unicode__(self):
         pstr = u"ERR%d: %r"
-        if type(self.message) in [str, unicode]:
+        if type(self.message) in [str, six.text_type]:
             pstr = u"ERR%d: %s"
         return pstr % (self.id, self.message)
 
     def __str__(self):
         pstr = u"ERR%d: %r"
-        if type(self.message) in [str, unicode]:
+        if type(self.message) in [str, six.text_type]:
             pstr = "ERR%d: %s"
 
         ### if we have here unicode, we might fail with conversion error

@@ -20,6 +20,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """
 The TiQR token is a special App based token, which allows easy login and
 which is based on OCRA.
@@ -76,7 +77,7 @@ the token in challenge response.
 This code is tested in tests/test_lib_tokens_tiqr.
 """
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 from privacyidea.api.lib.utils import getParam
 from privacyidea.lib.config import get_from_config
@@ -397,7 +398,7 @@ class TiqrTokenClass(OcraTokenClass):
         db_challenge.save()
 
         # Encode the user to UTF-8 and quote the result
-        encoded_user_identifier = urllib.quote_plus(user_identifier.encode('utf-8'))
+        encoded_user_identifier = six.moves.urllib.parse.quote_plus(user_identifier.encode('utf-8'))
         authurl = u"tiqrauth://{0!s}@{1!s}/{2!s}/{3!s}".format(
                                               encoded_user_identifier,
                                               service_identifier,

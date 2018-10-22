@@ -19,6 +19,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This contains the HostsMachineResolver which simply resolves
 the machines in a file like /etc/hosts.
 The machine id is the IP address in this case.

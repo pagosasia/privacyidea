@@ -46,6 +46,7 @@
 It is used for importing SafeNet (former Aladdin)
 XML files, that hold the OTP secrets for eToken PASS.
 '''
+from __future__ import absolute_import
 import defusedxml.ElementTree as etree
 import re
 import binascii

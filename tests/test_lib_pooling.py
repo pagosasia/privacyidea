@@ -4,6 +4,7 @@ This file contains the tests for the pooling module.
 In particular, this tests
 lib/pooling.py
 """
+from __future__ import absolute_import
 from sqlalchemy import create_engine
 
 from privacyidea.app import create_app

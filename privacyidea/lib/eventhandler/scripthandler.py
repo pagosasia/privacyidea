@@ -20,6 +20,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the event handler module for calling external scripts.
 You can put any script in the directory specified in
 PI_SCRIPT_HANDLER_DIRECTORY and call this script in any event.

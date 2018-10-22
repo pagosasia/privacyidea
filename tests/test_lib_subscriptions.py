@@ -1,6 +1,7 @@
 """
 This test file tests the lib.subscriptions.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from datetime import datetime, timedelta
 from privacyidea.lib.subscriptions import (save_subscription,

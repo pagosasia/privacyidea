@@ -7,6 +7,7 @@ lib.machines.base
 lib.machines.hosts
 """
 
+from __future__ import absolute_import
 HOSTSFILE = "tests/testdata/hosts"
 from .base import MyTestCase
 from privacyidea.lib.machines import BaseMachineResolver
@@ -93,13 +94,13 @@ class MachineResolverTestCase(MyTestCase):
     def test_02_list_resolvers(self):
         # check if the resolver, we created is in the database
         l = get_resolver_list()
-        self.assertTrue("testresolver" in l.keys(), l.keys())
+        self.assertTrue("testresolver" in list(l.keys()), list(l.keys()))
 
         l = get_resolver_list(filter_resolver_name="testresolver")
-        self.assertTrue("testresolver" in l.keys(), l.keys())
+        self.assertTrue("testresolver" in list(l.keys()), list(l.keys()))
 
         l = get_resolver_list(filter_resolver_type="hosts")
-        self.assertTrue("testresolver" in l.keys(), l.keys())
+        self.assertTrue("testresolver" in list(l.keys()), list(l.keys()))
 
     def test_03_get_resolver_config(self):
         c = get_resolver_config("testresolver")
@@ -130,7 +131,7 @@ class MachineResolverTestCase(MyTestCase):
     def test_99_delete_resolver(self):
         delete_resolver("testresolver")
         l = get_resolver_list(filter_resolver_name="testresolver")
-        self.assertTrue("testresolver" not in l.keys(), l.keys())
+        self.assertTrue("testresolver" not in list(l.keys()), list(l.keys()))
 
 
 class BaseMachineTestCase(MyTestCase):

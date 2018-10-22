@@ -3,6 +3,7 @@ This tests the files
   lib/stats.py and
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.audit import getAudit
 from privacyidea.lib.stats import get_statistics

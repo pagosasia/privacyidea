@@ -29,6 +29,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the event handler module for token actions.
 You can attach token actions like enable, disable, delete, unassign,... of the
 
@@ -114,7 +115,7 @@ class TokenEventHandler(BaseEventHandler):
 
         :return: dict with actions
         """
-        realm_list = get_realms().keys()
+        realm_list = list(get_realms().keys())
         actions = {ACTION_TYPE.SET_TOKENREALM:
                        {"realm":
                             {"type": "str",

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 from .base import MyTestCase
 from privacyidea.lib.error import (ParameterError, ConfigAdminError,
@@ -5,7 +7,7 @@ from privacyidea.lib.error import (ParameterError, ConfigAdminError,
 from privacyidea.lib.policy import PolicyClass
 from privacyidea.lib.config import (set_privacyidea_config,
                                     delete_privacyidea_config, SYSCONF)
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 
 PWFILE = "tests/testdata/passwords"
 POLICYFILE = "tests/testdata/policy.cfg"
@@ -389,7 +391,7 @@ class APIConfigTestCase(MyTestCase):
                                            method='DELETE',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            print(res.data)
+            print((res.data))
             result = json.loads(res.data).get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
@@ -400,7 +402,7 @@ class APIConfigTestCase(MyTestCase):
                                            method='DELETE',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            print(res.data)
+            print((res.data))
             result = json.loads(res.data).get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)

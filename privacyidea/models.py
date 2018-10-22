@@ -35,6 +35,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 import binascii
 import logging
 from datetime import datetime, timedelta
@@ -54,6 +55,7 @@ from sqlalchemy import and_
 from sqlalchemy.schema import Sequence
 from .lib.log import log_with
 from .lib.utils import is_true, convert_column_to_unicode
+import six
 
 log = logging.getLogger(__name__)
 
@@ -187,7 +189,7 @@ class Token(MethodsMixin, db.Model):
         
     def __init__(self, serial, tokentype=u"",
                  isactive=True, otplen=6,
-                 otpkey=u"",
+                 otpkey=b"",
                  userid=None, resolver=None, realm=None,
                  **kwargs):
         super(Token, self).__init__(**kwargs)
@@ -260,12 +262,12 @@ class Token(MethodsMixin, db.Model):
     def set_otpkey(self, otpkey, reset_failcount=True):
         iv = geturandom(16)
         enc_otp_key = encrypt(otpkey, iv)
-        self.key_enc = unicode(binascii.hexlify(enc_otp_key))
+        self.key_enc = binascii.hexlify(enc_otp_key).decode('utf8')
         length = len(self.key_enc)
         if length > Token.key_enc.property.columns[0].type.length:
             log.error("Key {0!s} exceeds database field {1:d}!".format(self.serial,
                                                              length))
-        self.key_iv = unicode(binascii.hexlify(iv))
+        self.key_iv = binascii.hexlify(iv).decode('utf8')
         self.count = 0
         if reset_failcount is True:
             self.failcount = 0
@@ -316,8 +318,8 @@ class Token(MethodsMixin, db.Model):
     def set_user_pin(self, userPin):
         iv = geturandom(16)
         enc_userPin = encrypt(userPin, iv)
-        self.user_pin = unicode(binascii.hexlify(enc_userPin))
-        self.user_pin_iv = unicode(binascii.hexlify(iv))
+        self.user_pin = six.text_type(binascii.hexlify(enc_userPin))
+        self.user_pin_iv = six.text_type(binascii.hexlify(iv))
 
     @log_with(log)
     def get_otpkey(self):
@@ -341,8 +343,8 @@ class Token(MethodsMixin, db.Model):
 
     def set_hashed_pin(self, pin):
         seed = geturandom(16)
-        self.pin_seed = unicode(binascii.hexlify(seed))
-        self.pin_hash = unicode(binascii.hexlify(hash(pin, seed)))
+        self.pin_seed = six.text_type(binascii.hexlify(seed))
+        self.pin_hash = six.text_type(binascii.hexlify(hash(pin, seed)))
         return self.pin_hash
 
     def get_hashed_pin(self, pin):
@@ -369,7 +371,7 @@ class Token(MethodsMixin, db.Model):
     def set_description(self, desc):
         if desc is None:
             desc = ""
-        self.description = unicode(desc)
+        self.description = six.text_type(desc)
         return self.description
 
     def set_pin(self, pin, hashed=True):
@@ -448,8 +450,8 @@ class Token(MethodsMixin, db.Model):
         """
         iv = geturandom(16)
         enc_soPin = encrypt(soPin, iv)
-        self.so_pin = unicode(binascii.hexlify(enc_soPin))
-        self.so_pin_iv = unicode(binascii.hexlify(iv))
+        self.so_pin = six.text_type(binascii.hexlify(enc_soPin))
+        self.so_pin_iv = six.text_type(binascii.hexlify(iv))
         return (self.so_pin, self.so_pin_iv)
 
     def __unicode__(self):
@@ -737,10 +739,10 @@ class Config(TimestampMethodsMixin, db.Model):
 
     @log_with(log)
     def __init__(self, Key, Value, Type=u'', Description=u''):
-        self.Key = unicode(Key)
+        self.Key = six.text_type(Key)
         self.Value = convert_column_to_unicode(Value)
-        self.Type = unicode(Type)
-        self.Description = unicode(Description)
+        self.Type = six.text_type(Type)
+        self.Description = six.text_type(Description)
 
     def __unicode__(self):
         return "<{0!s} ({1!s})>".format(self.Key, self.Type)
@@ -963,10 +965,10 @@ class ResolverConfig(TimestampMethodsMixin, db.Model):
                                        .filter_by(name=resolver)\
                                        .first()\
                                        .id
-        self.Key = unicode(Key)
+        self.Key = six.text_type(Key)
         self.Value = convert_column_to_unicode(Value)
-        self.Type = unicode(Type)
-        self.Description = unicode(Description)
+        self.Type = six.text_type(Type)
+        self.Description = six.text_type(Description)
 
     def save(self):
         c = ResolverConfig.query.filter_by(resolver_id=self.resolver_id,
@@ -1191,7 +1193,7 @@ class Challenge(MethodsMixin, db.Model):
         if type(data) in [dict, list]:
             self.data = dumps(data)
         else:
-            self.data = unicode(data)
+            self.data = six.text_type(data)
 
     def get_data(self):
         data = {}
@@ -1205,10 +1207,10 @@ class Challenge(MethodsMixin, db.Model):
         return self.session
 
     def set_session(self, session):
-        self.session = unicode(session)
+        self.session = six.text_type(session)
 
     def set_challenge(self, challenge):
-        self.challenge = unicode(challenge)
+        self.challenge = six.text_type(challenge)
     
     def get_challenge(self):
         return self.challenge
@@ -1258,7 +1260,7 @@ class Challenge(MethodsMixin, db.Model):
 
     def __unicode__(self):
         descr = self.get()
-        return "{0!s}".format(unicode(descr))
+        return "{0!s}".format(six.text_type(descr))
 
     __str__ = __unicode__
 
@@ -1312,7 +1314,7 @@ class Policy(TimestampMethodsMixin, db.Model):
                  active=True, scope="", action="", realm="", adminrealm="",
                  resolver="", user="", client="", time="", condition=0, priority=1,
                  check_all_resolvers=False):
-        if type(active) in [str, unicode]:
+        if type(active) in [str, six.text_type]:
             active = is_true(active.lower())
         self.name = name
         self.action = action
@@ -1515,7 +1517,7 @@ class MachineTokenOptions(db.Model):
                                                             machinetoken_id))
         self.machinetoken_id = machinetoken_id
         self.mt_key = key
-        self.mt_value = unicode(value)
+        self.mt_value = six.text_type(value)
 
         # if the combination machinetoken_id / mt_key already exist,
         # we need to update
@@ -1605,16 +1607,16 @@ class EventHandler(MethodsMixin, db.Model):
         self.save()
         # add the options to the event handler
         options = options or {}
-        for k, v in options.iteritems():
+        for k, v in six.iteritems(options):
             EventHandlerOption(eventhandler_id=self.id, Key=k, Value=v).save()
         conditions = conditions or {}
-        for k, v in conditions.iteritems():
+        for k, v in six.iteritems(conditions):
             EventHandlerCondition(eventhandler_id=self.id, Key=k, Value=v).save()
         # Delete event handler conditions, that ar not used anymore.
         ev_conditions = EventHandlerCondition.query.filter_by(
             eventhandler_id=self.id).all()
         for cond in ev_conditions:
-            if cond.Key not in conditions.keys():
+            if cond.Key not in list(conditions.keys()):
                 EventHandlerCondition.query.filter_by(
                     eventhandler_id=self.id, Key=cond.Key).delete()
                 db.session.commit()
@@ -1966,7 +1968,7 @@ class SMSGateway(MethodsMixin, db.Model):
                     SMSGatewayOption.query.filter_by(gateway_id=self.id,
                                                      Key=option).delete()
         # add the options to the SMS Gateway
-        for k, v in options.iteritems():
+        for k, v in six.iteritems(options):
             SMSGatewayOption(gateway_id=self.id, Key=k, Value=v).save()
 
     def save(self):
@@ -2565,7 +2567,7 @@ class PeriodicTask(MethodsMixin, db.Model):
         self.save()
         # add the options to the periodic task
         options = options or {}
-        for k, v in options.iteritems():
+        for k, v in six.iteritems(options):
             PeriodicTaskOption(periodictask_id=self.id, key=k, value=v)
         # remove all leftover options
         all_options = PeriodicTaskOption.query.filter_by(periodictask_id=self.id).all()

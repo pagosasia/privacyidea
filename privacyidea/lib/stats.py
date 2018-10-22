@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+from six.moves import range
 __doc__ = """This module reads audit data and can create statistics from
 audit data using pandas.
 
@@ -27,7 +29,7 @@ import logging
 import traceback
 from privacyidea.lib.log import log_with
 import datetime
-import StringIO
+from io import StringIO
 log = logging.getLogger(__name__)
 
 try:
@@ -79,7 +81,7 @@ def get_statistics(auditobject, start_time=datetime.datetime.now()
 def _get_success_fail(df, key):
 
     try:
-        output = StringIO.StringIO()
+        output = StringIO()
         # in this case series is actually a dataframe
         series = df[df.action.isin(["POST /validate/check",
                                     "GET /validate/check"])].groupby([key,
@@ -111,7 +113,7 @@ def _get_fail(df, key, nums=5):
                                        "GET /validate/check"]))][
                      key].value_counts(sort=True, dropna=True)[:nums]
 
-        series_list = [{"key": series.keys()[i], "count": series.tolist()[i]} for i in range(series.size)]
+        series_list = [{"key": list(series.keys())[i], "count": series.tolist()[i]} for i in range(series.size)]
         plot_canvas = matplotlib.pyplot.figure()
         ax = plot_canvas.add_subplot(1,1,1)
 
@@ -145,14 +147,14 @@ def _get_number_of(df, key, nums=5):
     :param num: how many of the most often values should be plotted
     :return: A data url
     """
-    output = StringIO.StringIO()
+    output = StringIO()
     output.truncate(0)
     try:
         plot_canvas = matplotlib.pyplot.figure()
         ax = plot_canvas.add_subplot(1, 1, 1)
 
         series = df[key].value_counts(sort=True, dropna=True)[:nums]
-        series_list = [{"key": series.keys()[i], "count": series.tolist()[i]} for i in range(series.size)]
+        series_list = [{"key": list(series.keys())[i], "count": series.tolist()[i]} for i in range(series.size)]
         fig = series.plot(ax=ax, kind="bar",
                           legend=False,
                           stacked=False,

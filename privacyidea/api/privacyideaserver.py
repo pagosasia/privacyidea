@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This endpoint is used to create, update, list and delete 
 privacyIDEA server definitions. privacyIDEA server definitions can be used for 
 Remote-Tokens and for Federation-Events.

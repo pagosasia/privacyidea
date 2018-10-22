@@ -3,6 +3,7 @@ This tests the files
   lib/task/eventcounter.py
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.counter import increase, read
 from privacyidea.lib.monitoringstats import get_values

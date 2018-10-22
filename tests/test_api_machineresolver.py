@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 from .base import MyTestCase
 
@@ -96,7 +98,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            method='DELETE',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            print(res.data)
+            print((res.data))
             result = json.loads(res.data).get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
@@ -107,7 +109,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            method='DELETE',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            print(res.data)
+            print((res.data))
             result = json.loads(res.data).get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
@@ -146,7 +148,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            method='DELETE',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            print(res.data)
+            print((res.data))
             result = json.loads(res.data).get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)

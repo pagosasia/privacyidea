@@ -6,6 +6,7 @@
 #            Initial writeup
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the controller API for client componet
 subscriptions like ownCloud plugin or RADIUS Credential Provider.
 """

@@ -23,6 +23,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 from privacyidea.lib.applications import MachineApplicationBase
 from privacyidea.lib.crypto import geturandom
 from privacyidea.lib.error import ValidateError, ParameterError

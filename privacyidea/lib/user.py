@@ -36,6 +36,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = '''There are the library functions for user functions.
 It depends on the lib.resolver and lib.realm.
 
@@ -44,6 +45,7 @@ or to webservices!
 
 This code is tested in tests/test_lib_user.py
 '''
+import six
 
 import logging
 import traceback
@@ -135,11 +137,11 @@ class User(object):
                                                 other.resolver) and (
                 self.realm == other.realm)
 
-    def __unicode__(self):
+    def __text_type__(self):
         ret = u"<empty user>"
         if not self.is_empty():
             login = self.login
-            if not isinstance(login, unicode):
+            if not isinstance(login, six.text_type):
                 login = login.decode(ENCODING)
             # Realm and resolver should always be ASCII
             conf = u''
@@ -149,7 +151,7 @@ class User(object):
         return ret
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return self.__text_type__()
 
     def __repr__(self):
         ret = ('User(login={0!r}, realm={1!r}, resolver={2!r})'.format(
@@ -344,7 +346,7 @@ class User(object):
         try:
             log.info("User %r from realm %r tries to "
                      "authenticate" % (self.login, self.realm))
-            if type(self.login) != unicode:
+            if type(self.login) != six.text_type:
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can verify the
@@ -409,7 +411,7 @@ class User(object):
         success = False
         try:
             log.info("User info for user {0!r}@{1!r} about to be updated.".format(self.login, self.realm))
-            if type(self.login) != unicode:
+            if type(self.login) != six.text_type:
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can update the
@@ -449,7 +451,7 @@ class User(object):
         success = False
         try:
             log.info("User {0!r}@{1!r} about to be deleted.".format(self.login, self.realm))
-            if type(self.login) != unicode:
+            if type(self.login) != six.text_type:
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can delete it

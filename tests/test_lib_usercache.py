@@ -3,6 +3,7 @@ This test file tests the lib.usercache
 
 The lib.usercache.py only depends on the database model
 """
+from __future__ import absolute_import
 from contextlib import contextmanager
 
 from mock import patch

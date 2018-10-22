@@ -24,6 +24,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This is the starting point for the single web application.
 Other html code is dynamically loaded via angularJS and located in
 /static/views/...
@@ -98,7 +99,7 @@ def single_page_application():
         except AttributeError as ex:
             # The policy is still a boolean realm_dropdown action
             # Thus we display ALL realms
-            realms = ",".join(get_realms().keys())
+            realms = ",".join(list(get_realms().keys()))
         if realms:
             realms = "," + realms
 

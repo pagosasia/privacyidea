@@ -28,6 +28,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__="""This is the implementation of the simple pass token.
 The simple pass token always returns TRUE as far as the checkOTP is concerned.
 Thus a user with a simple pass token can authenticate by just providing the

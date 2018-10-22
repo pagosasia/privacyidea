@@ -35,6 +35,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This module defines the RadiusTokenClass. The RADIUS token
 forwards the authentication request to another RADIUS server.
 

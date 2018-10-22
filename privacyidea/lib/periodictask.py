@@ -17,6 +17,7 @@
 #
 #
 
+from __future__ import absolute_import
 __doc__ = """This module provides functions to manage periodic tasks in the database,
 to determine their next scheduled running time and to run them."""
 

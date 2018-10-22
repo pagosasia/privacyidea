@@ -39,8 +39,10 @@ Wrapping the functions in a decorator class enables easy modular testing.
 
 The functions of this module are tested in tests/test_api_lib_policy.py
 """
+from __future__ import absolute_import
 import datetime
 import logging
+import six
 log = logging.getLogger(__name__)
 from privacyidea.lib.error import PolicyError
 from flask import g, current_app, make_response
@@ -162,13 +164,13 @@ def sign_response(request, response):
     else:
         response_object = response
     try:
-        content = json.loads(response_object.data)
+        content = response_object.get_json()
         nonce = request.all_data.get("nonce")
         if nonce:
             content["nonce"] = nonce
 
-        content["signature"] = sign_object.sign(json.dumps(content))
-        response_object.data = json.dumps(content)
+        content["signature"] = sign_object.sign(content.get_json())
+        response_object.data = content.get_json()
     except ValueError:
         # The response.data is no JSON (but CSV or policy export)
         # We do no signing in this case.
@@ -193,7 +195,7 @@ def check_tokentype(request, response):
     :type response: Response object
     :return: A new (maybe modified) response
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     tokentype = content.get("detail", {}).get("type")
     policy_object = g.policy_object
     user_object = request.User
@@ -226,7 +228,7 @@ def check_serial(request, response):
     :type response: Response object
     :return: A new (maybe modified) response
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
     serial = content.get("detail", {}).get("serial")
     # get the serials from a policy definition
@@ -259,7 +261,7 @@ def check_tokeninfo(request, response):
     :type response: Response object
     :return: A new modified response
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
     serial = content.get("detail", {}).get("serial")
     if serial:
@@ -300,7 +302,7 @@ def no_detail_on_success(request, response):
     :param response:
     :return:
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
 
     # get the serials from a policy definition
@@ -328,7 +330,7 @@ def add_user_detail_to_response(request, response):
     :param response:
     :return:
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
 
     # Check for ADD USER IN RESPONSE
@@ -342,7 +344,7 @@ def add_user_detail_to_response(request, response):
         #  details
         ui = request.User.info
         ui["password"] = ""
-        for key, value in ui.iteritems():
+        for key, value in six.iteritems(ui):
             if type(value) == datetime.datetime:
                 ui[key] = str(value)
         content["detail"]["user"] = ui
@@ -374,7 +376,7 @@ def no_detail_on_fail(request, response):
     :param response:
     :return:
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
 
     # get the serials from a policy definition
@@ -411,7 +413,7 @@ def save_pin_change(request, response, serial=None):
     :param action:
     :return:
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     policy_object = g.policy_object
     serial = serial or request.all_data.get("serial")
     if not serial:
@@ -464,7 +466,7 @@ def offline_info(request, response):
     OTP.
 
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     # check if the authentication was successful
     if content.get("result").get("value") is True and g.client_ip:
         # If there is no remote address, we can not determine
@@ -496,7 +498,7 @@ def get_webui_settings(request, response):
     :param response: flask response object
     :return: the response
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     # check, if the authentication was successful, then we need to do nothing
     if content.get("result").get("status") is True:
         role = content.get("result").get("value").get("role")
@@ -652,7 +654,7 @@ def autoassign(request, response):
     into account ACTION.MAXTOKENUSER and ACTION.MAXTOKENREALM.
     :return:
     """
-    content = json.loads(response.data)
+    content = response.get_json()
     # check, if the authentication was successful, then we need to do nothing
     if content.get("result").get("value") is False:
         user_obj = request.User
@@ -736,7 +738,7 @@ def construct_radius_response(request, response):
     """
     if request.url_rule.rule == '/validate/radiuscheck':
         return_code = 400 # generic 400 error by default
-        content = json.loads(response.data)
+        content = response.get_json()
         if content['result']['status']:
             if content['result']['value']:
                 # user was successfully authenticated

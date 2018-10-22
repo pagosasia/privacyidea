@@ -17,6 +17,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
+import six
 __doc__ = """This contains the Base Class for Machine Resolvers. Machines
 Resolvers are used to tie a Machine Object to a token and an application. To
 do so a Machine Resolver can translate between a FQDN, Hostname, IP and the
@@ -39,7 +41,7 @@ class Machine(object):
         self.id = machine_id
         self.resolver_name = resolver_name
         self.hostname = hostname
-        if type(ip) in [basestring, str, unicode]:
+        if type(ip) in [six.string_types, str, six.text_type]:
             self.ip = netaddr.IPAddress(ip)
         else:
             self.ip = ip
@@ -55,7 +57,7 @@ class Machine(object):
         """
         if type(self.hostname) == list:
             return hostname in self.hostname
-        elif type(self.hostname) in [basestring, str, unicode]:
+        elif type(self.hostname) in [six.string_types, str, six.text_type]:
             return hostname.lower() == self.hostname.lower()
 
     def has_ip(self, ip):
@@ -68,7 +70,7 @@ class Machine(object):
         :return: True or false
         """
         # convert to IPAddress
-        if type(ip) in [basestring, str, unicode]:
+        if type(ip) in [six.string_types, str, six.text_type]:
             ip = netaddr.IPAddress(ip)
 
         if type(self.ip) == list:

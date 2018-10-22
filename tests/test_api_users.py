@@ -1,9 +1,10 @@
 # coding: utf-8
+from __future__ import absolute_import
 from .base import MyTestCase
 import json
 from privacyidea.lib.resolver import (save_resolver)
 from privacyidea.lib.realm import (set_realm)
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 
 PWFILE = "tests/testdata/passwd"
 

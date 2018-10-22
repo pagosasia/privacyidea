@@ -1,6 +1,7 @@
 """
 This file contains the tests for the lifecycle module lib/lifecycle.py
 """
+from __future__ import absolute_import
 import json
 from mock import mock
 

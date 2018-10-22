@@ -55,6 +55,7 @@ Wrapping the functions in a decorator class enables easy modular testing.
 
 The functions of this module are tested in tests/test_api_lib_policy.py
 """
+from __future__ import absolute_import
 import logging
 log = logging.getLogger(__name__)
 from privacyidea.lib.error import PolicyError, RegistrationError

@@ -37,6 +37,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+from six.moves import range
 __doc__ = """
 This is the HOTP implementation.
 It is inherited from lib.tokenclass and is thus dependent on models.py
@@ -227,8 +229,8 @@ class HotpTokenClass(TokenClass):
                 try:
                     key_bin = binascii.unhexlify(otpkey)
                     # also strip the padding =, as it will get problems with the google app.
-                    value_b32 = base64.b32encode(key_bin).strip('=')
-                    value_b32_str = "{0!s}".format(value_b32)
+                    value_b32 = base64.b32encode(key_bin).strip(b'=')
+                    value_b32_str = "{0!s}".format(value_b32.decode('utf8'))
                     response_detail["otpkey"]["value_b32"] = value_b32_str
                     goo_url = cr_google(key=otpkey,
                                         user=user.login,

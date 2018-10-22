@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 import json
 from privacyidea.app import create_app
@@ -150,7 +151,7 @@ class MyTestCase(unittest.TestCase):
                                            method='POST'):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = json.loads(res.get_data(as_text=True)).get("result")
             self.assertTrue(result.get("status"), res.data)
             self.at = result.get("value").get("token")
 

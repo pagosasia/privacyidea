@@ -4,6 +4,8 @@ This test file tests the lib.user
 
 The lib.user.py only depends on the database model
 """
+from __future__ import absolute_import
+import six
 PWFILE = "tests/testdata/passwd"
 PWFILE2 = "tests/testdata/passwords"
 
@@ -62,7 +64,7 @@ class UserTestCase(MyTestCase):
         self.assertTrue(user_str == "<root.resolver1@realm1>", user_str)
         # check proper unicode() and str() handling
         self.assertIsInstance(str(user), bytes)
-        self.assertIsInstance(unicode(user), unicode)
+        self.assertIsInstance(six.text_type(user), six.text_type)
         
         self.assertFalse(user.is_empty())
         self.assertTrue(User().is_empty())
@@ -365,6 +367,6 @@ class UserTestCase(MyTestCase):
 
         # check proper unicode() and str() handling
         user_object = User(login=u"nönäscii", realm=realm)
-        self.assertEqual(unicode(user_object), u'<nönäscii.SQL1@sqlrealm>')
+        self.assertEqual(six.text_type(user_object), u'<nönäscii.SQL1@sqlrealm>')
         self.assertEqual(str(user_object), '<n\xc3\xb6n\xc3\xa4scii.SQL1@sqlrealm>')
 

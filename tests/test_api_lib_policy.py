@@ -3,6 +3,8 @@ This test file tests the api.lib.policy.py
 
 The api.lib.policy.py depends on lib.policy and on flask!
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 
 from .base import (MyTestCase, PWFILE)

@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
-import smtpmock
+from . import smtpmock
 from privacyidea.lib.config import set_privacyidea_config
 
 

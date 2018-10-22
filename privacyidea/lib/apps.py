@@ -42,12 +42,14 @@ oath token
 This only depends on the ConfigPolicy.
 """
 
+from __future__ import absolute_import
 import binascii
 import base64
 
 import logging
+import six
 log = logging.getLogger(__name__)
-from urllib import quote
+from six.moves.urllib.parse import quote
 from privacyidea.lib.log import log_with
 from privacyidea.lib.user import User
 
@@ -62,13 +64,14 @@ def _construct_extra_parameters(extra_data):
     :return: a string (may be empty if ``extra_data`` is empty
     """
     extra_data_list = []
-    for key, value in extra_data.iteritems():
-        if isinstance(key, unicode):
+    for key, value in six.iteritems(extra_data):
+        value = str(value)
+        if isinstance(key, six.text_type):
             key = key.encode('utf-8')
-        if isinstance(value, unicode):
+        if isinstance(value, six.text_type):
             value = value.encode('utf-8')
-        extra_data_list.append('{key}={value}'.format(key=quote(str(key)),
-                                                      value=quote(str(value))))
+        extra_data_list.append('{key}={value}'.format(key=quote(key),
+                                                      value=quote(value)))
     return ('&' if extra_data_list else '') + '&'.join(extra_data_list)
 
 
@@ -126,7 +129,7 @@ def create_google_authenticator_url(key=None, user=None,
 
     key_bin = binascii.unhexlify(key)
     # also strip the padding =, as it will get problems with the google app.
-    otpkey = base64.b32encode(key_bin).strip('=')
+    otpkey = base64.b32encode(key_bin).strip(b'=').decode('utf8')
 
     base_len = len("otpauth://{0!s}/?secret={1!s}&counter=1".format(tokentype, otpkey))
     allowed_label_len = MAX_QRCODE_LEN - base_len

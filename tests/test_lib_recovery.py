@@ -2,9 +2,10 @@
 """
 This test file tests the lib/passwordreset.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.smtpserver import add_smtpserver
-import smtpmock
+from . import smtpmock
 from privacyidea.lib.error import privacyIDEAError
 from privacyidea.lib.passwordreset import (create_recoverycode,
                                            check_recoverycode,

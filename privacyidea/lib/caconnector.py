@@ -23,6 +23,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
+import six
 __doc__ = """This the library for handling CA connector definitions which are
 stored in the database table "caconnector".
 
@@ -30,8 +32,8 @@ The code is tested in tests/test_lib_caconnector.py.
 """
 
 import logging
-from log import log_with
-from config import (get_caconnector_types,
+from .log import log_with
+from .config import (get_caconnector_types,
                     get_caconnector_class_dict)
 from ..models import (CAConnector,
                       CAConnectorConfig)
@@ -73,7 +75,7 @@ def save_caconnector(params):
     sanity_name_check(connector_name)
     # check the type
     if connector_type not in get_caconnector_types():
-        raise Exception("connector type : {0!s} not in {1!s}".format(connector_type, unicode(get_caconnector_types())))
+        raise Exception("connector type : {0!s} not in {1!s}".format(connector_type, six.text_type(get_caconnector_types())))
 
     # check the name
     connectors = get_caconnector_list(filter_caconnector_name=connector_name)
@@ -243,7 +245,7 @@ def get_caconnector_class(connector_type):
     
     (connector_classes, connector_types) = get_caconnector_class_dict()
 
-    if connector_type in connector_types.values():
+    if connector_type in list(connector_types.values()):
         for k, v in connector_types.items():
             if v == connector_type:
                 ret = connector_classes.get(k)

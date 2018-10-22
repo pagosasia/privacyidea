@@ -3,6 +3,7 @@ This test file tests the lib.challange methods.
 
 This tests the token functions on an interface level
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.error import (TokenAdminError, ParameterError)
 from privacyidea.lib.challenge import get_challenges

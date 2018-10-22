@@ -21,6 +21,7 @@
 """
 This file is tested in tests/test_lib_machinetokens.py
 """
+from __future__ import absolute_import
 from privacyidea.lib.applications import MachineApplicationBase
 import logging
 from privacyidea.lib.token import get_tokens

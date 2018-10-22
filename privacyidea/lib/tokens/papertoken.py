@@ -25,6 +25,7 @@ This file contains the definition of the paper token class
 It depends on the DB model, and the lib.tokenclass.
 """
 
+from __future__ import absolute_import
 import logging
 from privacyidea.lib.log import log_with
 from privacyidea.lib.tokenclass import TokenClass

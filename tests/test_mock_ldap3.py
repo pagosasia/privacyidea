@@ -3,9 +3,10 @@
 This test file tests the test.ldap3mock
 """
 
+from __future__ import absolute_import
 import unittest
 import ldap3
-import ldap3mock
+from . import ldap3mock
 from privacyidea.lib.resolvers.LDAPIdResolver import trim_objectGUID
 
 objectGUIDs = [

@@ -152,6 +152,7 @@ and any combination of it. "dow" being day of week Mon, Tue, Wed, Thu, Fri,
 Sat, Sun.
 """
 
+from __future__ import absolute_import
 from .log import log_with
 from configobj import ConfigObj
 
@@ -175,6 +176,8 @@ from privacyidea.lib import _
 import datetime
 import re
 import ast
+import six
+from six.moves import range
 
 log = logging.getLogger(__name__)
 
@@ -375,7 +378,7 @@ class TIMEOUT_ACTION(object):
     LOCKSCREEN = 'lockscreen'
 
 
-class PolicyClass(object):
+class PolicyClass(six.with_metaclass(Singleton, object)):
 
     """
     The Policy_Object will contain all database policy entries for easy
@@ -383,7 +386,6 @@ class PolicyClass(object):
     It will be created at the beginning of the request and is supposed to stay
     alive unchanged during the request.
     """
-    __metaclass__ = Singleton
 
     def __init__(self):
         """
@@ -752,7 +754,7 @@ class PolicyClass(object):
                 if action_value:
                     rights.append(action)
                     # if the action has an actual non-boolean value, return it
-                    if isinstance(action_value, basestring):
+                    if isinstance(action_value, six.string_types):
                         rights.append(u"{}={}".format(action, action_value))
         # check if we have policies at all:
         pols = self.get_policies(scope=scope, active=True)
@@ -760,8 +762,8 @@ class PolicyClass(object):
             # We do not have any policies in this scope, so we return all
             # possible actions in this scope.
             log.debug("No policies defined, so we set all rights.")
-            static_rights = get_static_policy_definitions(scope).keys()
-            enroll_rights = get_dynamic_policy_definitions(scope).keys()
+            static_rights = list(get_static_policy_definitions(scope).keys())
+            enroll_rights = list(get_dynamic_policy_definitions(scope).keys())
             rights = static_rights + enroll_rights
         # reduce the list
         rights = list(set(rights))
@@ -866,13 +868,13 @@ def set_policy(name=None, scope=None, action=None, realm=None, resolver=None,
     :return: The database ID od the the policy
     :rtype: int
     """
-    if type(active) in [str, unicode]:
+    if type(active) in [str, six.text_type]:
         active = active.lower() == "true"
-    if type(priority) in [str, unicode]:
+    if type(priority) in [str, six.text_type]:
         priority = int(priority)
     if priority is not None and priority <= 0:
         raise ParameterError("Priority must be at least 1")
-    if type(check_all_resolvers) in [str, unicode]:
+    if type(check_all_resolvers) in [str, six.text_type]:
         check_all_resolvers = check_all_resolvers.lower() == "true"
     if type(action) == dict:
         action_list = []
@@ -1007,7 +1009,7 @@ def import_policies(file_contents):
     """
     policies = ConfigObj(file_contents.split('\n'), encoding="UTF-8")
     res = 0
-    for policy_name, policy in policies.iteritems():
+    for policy_name, policy in six.iteritems(policies):
         ret = set_policy(name=policy_name,
                          action=ast.literal_eval(policy.get("action")),
                          scope=policy.get("scope"),
@@ -1037,8 +1039,8 @@ def get_static_policy_definitions(scope=None):
     description.
     :rtype: dict
     """
-    resolvers = get_resolver_list().keys()
-    realms = get_realms().keys()
+    resolvers = list(get_resolver_list().keys())
+    realms = list(get_realms().keys())
     smtpconfigs = [server.config.identifier for server in get_smtpservers()]
     radiusconfigs = [radius.config.identifier for radius in
                      get_radiusservers()]
@@ -1263,12 +1265,12 @@ def get_static_policy_definitions(scope=None):
                                            'group': GROUP.SYSTEM,
                                            'mainmenu': [MAIN_MENU.CONFIG]},
             ACTION.OTPPINMAXLEN: {'type': 'int',
-                                  'value': range(0, 32),
+                                  'value': list(range(0, 32)),
                                   "desc": _("Set the maximum allowed length "
                                             "of the OTP PIN."),
                                   'group': GROUP.PIN},
             ACTION.OTPPINMINLEN: {'type': 'int',
-                                  'value': range(0, 32),
+                                  'value': list(range(0, 32)),
                                   "desc": _("Set the minimum required length "
                                             "of the OTP PIN."),
                                   'group': GROUP.PIN},
@@ -1435,12 +1437,12 @@ def get_static_policy_definitions(scope=None):
                                          "PIN during enrollment."),
                                'group': GROUP.PIN},
             ACTION.OTPPINMAXLEN: {'type': 'int',
-                                  'value': range(0, 32),
+                                  'value': list(range(0, 32)),
                                   "desc": _("Set the maximum allowed length "
                                             "of the OTP PIN."),
                                   'group': GROUP.PIN},
             ACTION.OTPPINMINLEN: {'type': 'int',
-                                  'value': range(0, 32),
+                                  'value': list(range(0, 32)),
                                   "desc": _("Set the minimum required length "
                                             "of the OTP PIN."),
                                   'group': GROUP.PIN},
@@ -1487,7 +1489,7 @@ def get_static_policy_definitions(scope=None):
                 'group': GROUP.TOKEN},
             ACTION.OTPPINRANDOM: {
                 'type': 'int',
-                'value': range(0, 32),
+                'value': list(range(0, 32)),
                 "desc": _("Set a random OTP PIN with this length for a "
                           "token."),
                 'group': GROUP.PIN},
@@ -1541,7 +1543,7 @@ def get_static_policy_definitions(scope=None):
                 'group': GROUP.TOKEN},
             ACTION.LOSTTOKENPWLEN: {
                 'type': 'int',
-                'value': range(1, 32),
+                'value': list(range(1, 32)),
                 'desc': _('The length of the password in case of '
                           'temporary token (lost token).')},
             ACTION.LOSTTOKENPWCONTENTS: {
@@ -1550,7 +1552,7 @@ def get_static_policy_definitions(scope=None):
                           'described by the characters C, c, n, s.')},
             ACTION.LOSTTOKENVALID: {
                 'type': 'int',
-                'value': range(1, 61),
+                'value': list(range(1, 61)),
                 'desc': _('The length of the validity for the temporary '
                           'token (in days).')},
         },

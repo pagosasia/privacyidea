@@ -28,6 +28,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
 __doc__="""This is the SMSClass to send SMS via SMTP Gateway.
 i.e. a Mail is sent to an Gateway/Emailserver and dependig on the
 address, subject and body this gateway will trigger the sending of the SMS.

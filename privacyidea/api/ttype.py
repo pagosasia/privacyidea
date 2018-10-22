@@ -31,6 +31,7 @@ the core API.
 The TiQR Token uses this API to implement its special functionalities. See
 :ref:`code_tiqr_token`.
 """
+from __future__ import absolute_import
 from flask import (Blueprint,
                    request)
 from .lib.utils import (getParam,

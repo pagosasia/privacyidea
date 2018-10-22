@@ -3,6 +3,7 @@ This file tests the web UI Login
 
 implementation is contained webui/login.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.policy import set_policy, SCOPE, ACTION
 

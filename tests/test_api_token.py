@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from .base import MyTestCase
 import json
 import os
@@ -7,12 +8,13 @@ from privacyidea.lib.policy import (set_policy, delete_policy, SCOPE, ACTION,
 from privacyidea.lib.token import get_tokens, init_token, remove_token
 from privacyidea.lib.user import User
 from privacyidea.lib.caconnector import save_caconnector
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 from privacyidea.lib.token import check_serial_pass
 from privacyidea.lib.tokenclass import DATE_FORMAT
 from privacyidea.lib.config import set_privacyidea_config, delete_privacyidea_config
 from dateutil.tz import tzlocal
 from privacyidea.lib import _
+from six.moves import range
 
 PWFILE = "tests/testdata/passwords"
 IMPORTFILE = "tests/testdata/import.oath"

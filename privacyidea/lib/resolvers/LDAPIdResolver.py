@@ -48,6 +48,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+import six
 __doc__ = """This is the resolver to find users in LDAP directories like
 OpenLDAP and Active Directory.
 
@@ -58,7 +60,7 @@ import logging
 import yaml
 import functools
 
-from UserIdResolver import UserIdResolver
+from .UserIdResolver import UserIdResolver
 
 import ldap3
 from ldap3 import MODIFY_REPLACE, MODIFY_ADD, MODIFY_DELETE
@@ -196,18 +198,18 @@ def cache(func):
                                   "_getDN": {}}
 
         # get the portion of the cache for this very LDAP resolver
-        r_cache = CACHE.get(resolver_id).get(func.func_name)
+        r_cache = CACHE.get(resolver_id).get(func.__name__)
         if args[0] in r_cache and \
                         datetime.datetime.now() < r_cache[args[0]][
                     "timestamp"] + \
                         datetime.timedelta(seconds=self.cache_timeout):
             log.debug("Reading {0!r} from cache for {1!r}".format(args[0],
-                                                              func.func_name))
+                                                              func.__name__))
             return r_cache[args[0]]["value"]
 
         f_result = func(self, *args, **kwds)
         # now we cache the result
-        CACHE[resolver_id][func.func_name][args[0]] = {
+        CACHE[resolver_id][func.__name__][args[0]] = {
             "value": f_result,
             "timestamp": datetime.datetime.now()}
 
@@ -404,7 +406,7 @@ class IdResolver (UserIdResolver):
             self.l.search(search_base=self.basedn,
                           search_scope=self.scope,
                           search_filter=filter,
-                          attributes=self.userinfo.values())
+                          attributes=list(self.userinfo.values()))
             r = self.l.response
             r = self._trim_result(r)
             if len(r) > 1:  # pragma: no cover
@@ -454,7 +456,7 @@ class IdResolver (UserIdResolver):
             self.l.search(search_base=to_utf8(userId),
                           search_scope=self.scope,
                           search_filter=u"(&" + self.searchfilter + u")",
-                          attributes=self.userinfo.values())
+                          attributes=list(self.userinfo.values()))
         else:
             search_userId = to_unicode(self._trim_user_id(userId))
             filter = u"(&{0!s}({1!s}={2!s}))".format(self.searchfilter,
@@ -463,7 +465,7 @@ class IdResolver (UserIdResolver):
             self.l.search(search_base=self.basedn,
                               search_scope=self.scope,
                               search_filter=filter,
-                              attributes=self.userinfo.values())
+                              attributes=list(self.userinfo.values()))
 
         r = self.l.response
         r = self._trim_result(r)
@@ -490,7 +492,7 @@ class IdResolver (UserIdResolver):
                 if ldap_k == map_v:
                     if ldap_k == "objectGUID":
                         # An objectGUID should be no list, since it is unique
-                        if isinstance(ldap_v, basestring):
+                        if isinstance(ldap_v, six.string_types):
                             ret[map_k] = ldap_v.strip("{").strip("}")
                         else:
                             raise Exception("The LDAP returns an objectGUID, that is no string: {0!s}".format(type(ldap_v)))
@@ -560,7 +562,7 @@ class IdResolver (UserIdResolver):
         filter = u"(&{0!s}({1!s}))".format(self.searchfilter, loginname_filter)
 
         # create search attributes
-        attributes = self.userinfo.values()
+        attributes = list(self.userinfo.values())
         if self.uidtype.lower() != "dn":
             attributes.append(str(self.uidtype))
 
@@ -589,7 +591,7 @@ class IdResolver (UserIdResolver):
         """
         ret = []
         self._bind()
-        attributes = self.userinfo.values()
+        attributes = list(self.userinfo.values())
         ad_timestamp = get_ad_timestamp_now()
         if self.uidtype.lower() != "dn":
             attributes.append(str(self.uidtype))
@@ -899,7 +901,7 @@ class IdResolver (UserIdResolver):
             if not l.bind():
                 raise Exception("Wrong credentials")
             # create searchattributes
-            attributes = yaml.safe_load(param["USERINFO"]).values()
+            attributes = list(yaml.safe_load(param["USERINFO"]).values())
             if uidtype.lower() != "dn":
                 attributes.append(str(uidtype))
             # search for users...
@@ -1010,7 +1012,7 @@ class IdResolver (UserIdResolver):
         :return: dict with attribute name as keys and values
         """
         ldap_attributes = {}
-        for fieldname, value in attributes.iteritems():
+        for fieldname, value in six.iteritems(attributes):
             if self.map.get(fieldname):
                 if fieldname == "password":
                     # Variable value may be either a string or a list
@@ -1065,7 +1067,7 @@ class IdResolver (UserIdResolver):
         modify_changes = {}
         uinfo = self.getUserInfo(uid)
 
-        for fieldname, value in attributes.iteritems():
+        for fieldname, value in six.iteritems(attributes):
             if value:
                 if fieldname in uinfo:
                     modify_changes[fieldname] = [MODIFY_REPLACE, [value]]

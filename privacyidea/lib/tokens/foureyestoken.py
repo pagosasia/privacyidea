@@ -23,6 +23,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This is the implementation of the 4eyes token.
 The 4eyes token combines several other tokens to a virtual new token,
 requiring that 2 or more users with different tokens are present to

@@ -1,13 +1,14 @@
 """
 This test file tests the lib/smtpserver.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.error import ConfigAdminError
 from privacyidea.lib.smtpserver import (get_smtpservers, add_smtpserver,
                                         delete_smtpserver, get_smtpserver,
                                         SMTPServer)
 from privacyidea.models import SMTPServer as SMTPServerDB
-import smtpmock
+from . import smtpmock
 from smtplib import SMTPException
 
 

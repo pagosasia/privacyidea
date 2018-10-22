@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from urllib import urlencode
+from __future__ import absolute_import
+from six.moves.urllib.parse import urlencode
 import json
+import responses
 
 from .base import MyTestCase
 from privacyidea.lib.user import (User)
@@ -20,7 +22,8 @@ from privacyidea.lib.resolver import save_resolver, get_resolver_list
 from privacyidea.lib.realm import set_realm, set_default_realm
 from privacyidea.lib import _
 
-import smtpmock, ldap3mock, responses
+from . import smtpmock, ldap3mock
+from six.moves import range
 
 
 PWFILE = "tests/testdata/passwords"

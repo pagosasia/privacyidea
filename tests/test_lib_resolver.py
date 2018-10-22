@@ -8,9 +8,11 @@ lib.resolvers.ldapresolver
 
 The lib.resolver.py only depends on the database model.
 """
-PWFILE = "tests/testdata/passwords"
+from __future__ import absolute_import
+from __future__ import print_function
+
 from .base import MyTestCase
-import ldap3mock
+from . import ldap3mock
 from ldap3.core.exceptions import LDAPOperationResult
 from ldap3.core.results import RESULT_SIZE_LIMIT_EXCEEDED
 import mock
@@ -29,6 +31,8 @@ from privacyidea.lib.resolver import (save_resolver,
                                       get_resolver_list,
                                       get_resolver_object, pretestresolver)
 from privacyidea.models import ResolverConfig
+
+PWFILE = "tests/testdata/passwords"
 
 objectGUIDs = [
     '039b36ef-e7c0-42f3-9bf9-ca6a6c0d4d31',
@@ -195,26 +199,26 @@ class SQLResolverTestCase(MyTestCase):
 
     def test_01_where_tests(self):
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
-                                                              "hans"}.items()))
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
+                                                              "hans"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 1, userlist)
 
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname like "
-                                                              "hans"}.items()))
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname like "
+                                                              "hans"}.items())))
         userlist = y.getUserList()
         self.assertEqual(len(userlist), 1)
 
         y = SQLResolver()
         y.loadConfig(
-            dict(self.parameters.items() + {"Where": "id > 2"}.items()))
+            dict(list(self.parameters.items()) + list({"Where": "id > 2"}.items())))
         userlist = y.getUserList()
         self.assertEqual(len(userlist), self.num_users - 2)
 
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "id < "
-                                                              "5"}.items()))
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "id < "
+                                                              "5"}.items())))
         userlist = y.getUserList()
         self.assertEqual(len(userlist), 4)
 
@@ -307,38 +311,38 @@ class SQLResolverTestCase(MyTestCase):
         
     def test_06_append_where_filter(self):
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
                                                               "hans and name "
-                                                              "== dampf"}.items()))
+                                                              "== dampf"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 1, userlist)
         
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
                                                               "hans AND name "
-                                                              "== dampf"}.items()))
+                                                              "== dampf"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 1, userlist)
 
         # Also allow more than one blank surrounding the "and"
         # SQLAlchemy strips the blanks in the condition
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
                                                               "hans   AND name "
-                                                              "== dampf"}.items()))
+                                                              "== dampf"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 1, userlist)
         
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
                                                               "hans and name "
-                                                              "== test"}.items()))
+                                                              "== test"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 0, userlist)
         
         y = SQLResolver()
-        y.loadConfig(dict(self.parameters.items() + {"Where": "givenname == "
-                                                              "chandler"}.items()))
+        y.loadConfig(dict(list(self.parameters.items()) + list({"Where": "givenname == "
+                                                              "chandler"}.items())))
         userlist = y.getUserList()
         self.assertTrue(len(userlist) == 0, userlist)
 

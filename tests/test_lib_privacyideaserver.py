@@ -1,6 +1,7 @@
 """
 This test file tests the lib/privacyideaserver.py
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.error import ConfigAdminError
 from privacyidea.lib.privacyideaserver import (add_privacyideaserver,

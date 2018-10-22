@@ -2,6 +2,7 @@
 This testcase is used to test the REST API  in api/caconnector.py
 to create, update, delete CA connectors.
 """
+from __future__ import absolute_import
 from .base import MyTestCase
 import json
 from privacyidea.lib.caconnector import get_caconnector_list, save_caconnector

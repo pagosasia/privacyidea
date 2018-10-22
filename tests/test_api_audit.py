@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 from privacyidea.lib.policy import set_policy, SCOPE, ACTION, delete_policy

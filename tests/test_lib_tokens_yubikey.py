@@ -2,6 +2,7 @@
 This test file tests the lib.tokens.yubikeytoken
 
 """
+from __future__ import absolute_import
 PWFILE = "tests/testdata/passwords"
 
 from .base import MyTestCase

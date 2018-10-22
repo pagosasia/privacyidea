@@ -23,6 +23,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 from ...lib.error import (ParameterError,
                           AuthError, ERROR)
 from ...lib.log import log_with
@@ -36,6 +37,7 @@ import jwt
 from flask import (jsonify,
                    current_app,
                    Response)
+import six
 
 log = logging.getLogger(__name__)
 ENCODING = "utf-8"
@@ -207,7 +209,7 @@ def send_csv_result(obj, data_key="tokens",
     # Do the data
     for row in obj.get(data_key, {}):
         for val in row.values():
-            if type(val) in [str, unicode]:
+            if type(val) in [str, six.text_type]:
                 value = val.replace("\n", " ")
             else:
                 value = val
@@ -239,7 +241,7 @@ def get_all_params(param, body):
 
     # In case of serialized JSON data in the body, add these to the values.
     try:
-        json_data = json.loads(body)
+        json_data = body.get_json()
         for k, v in json_data.items():
             return_param[k] = v
     except Exception as exx:

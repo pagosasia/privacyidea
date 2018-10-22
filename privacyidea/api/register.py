@@ -23,6 +23,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import
 __doc__ = """This module contains the REST API for registering as a new user.
 This endpoint can be used without any authentication, since a new user can
 register.

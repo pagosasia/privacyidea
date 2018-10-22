@@ -26,6 +26,7 @@ Configuration. Event handling configuration is stored in the database table
 
 The code of this module is tested in tests/test_api_events.py
 """
+from __future__ import absolute_import
 from flask import (Blueprint,
                    request)
 from .lib.utils import getParam, send_result
@@ -38,6 +39,7 @@ from ..lib.policy import ACTION
 from privacyidea.lib.event import AVAILABLE_EVENTS, get_handler_object
 from privacyidea.lib.utils import is_true
 import json
+import six
 
 
 log = logging.getLogger(__name__)
@@ -156,7 +158,7 @@ def set_eventhandling():
     if type(conditions) is not dict:
         conditions = json.loads(conditions)
     options = {}
-    for k, v in param.iteritems():
+    for k, v in six.iteritems(param):
         if k.startswith("option."):
             options[k[7:]] = v
 

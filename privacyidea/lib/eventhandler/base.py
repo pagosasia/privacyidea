@@ -24,6 +24,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+from __future__ import absolute_import
 __doc__ = """This is the base class for an event handler module.
 The event handler module is bound to an event together with
 
@@ -122,7 +123,7 @@ class BaseEventHandler(object):
             "realm": {
                 "type": "str",
                 "desc": _("The user realm, for which this event should apply."),
-                "value": realms.keys()
+                "value": list(realms.keys())
             },
             "tokenrealm": {
                 "type": "multi",

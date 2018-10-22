@@ -4,6 +4,7 @@ This test file tests the lib.policy.py
 
 The lib.policy.py only depends on the database model.
 """
+from __future__ import absolute_import
 from .base import MyTestCase, FakeFlaskG
 
 from privacyidea.lib.policy import (set_policy, delete_policy,

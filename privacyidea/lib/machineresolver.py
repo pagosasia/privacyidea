@@ -31,8 +31,9 @@ config.py, so this can be tested standalone without realms, tokens and
 webservice!
 """
 
+from __future__ import absolute_import
 import logging
-from log import log_with
+from .log import log_with
 from ..models import (MachineResolver,
                       MachineResolverConfig)
 from ..api.lib.utils import required
@@ -75,8 +76,8 @@ def save_resolver(params):
     sanity_name_check(resolvername)
     # check the type
     (class_dict, type_dict) = get_machine_resolver_class_dict()
-    if resolvertype not in type_dict.values():
-            raise Exception("machine resolver type : {0!s} not in {1!s}".format(resolvertype, type_dict.values()))
+    if resolvertype not in list(type_dict.values()):
+            raise Exception("machine resolver type : {0!s} not in {1!s}".format(resolvertype, list(type_dict.values())))
 
     # check the name
     resolvers = get_resolver_list(filter_resolver_name=resolvername)
@@ -216,7 +217,7 @@ def get_resolver_class(resolver_type):
     
     (resolver_clazzes, resolver_types) = get_machine_resolver_class_dict()
 
-    if resolver_type in resolver_types.values():
+    if resolver_type in list(resolver_types.values()):
         for k, v in resolver_types.items():
             if v == resolver_type:
                 ret = resolver_clazzes.get(k)

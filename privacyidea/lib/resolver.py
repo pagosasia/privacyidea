@@ -41,10 +41,13 @@ Its only dependencies are to the database model.py and to the
 config.py, so this can be tested standalone without realms, tokens and
 webservice!
 """
+from __future__ import absolute_import
+
+import six
 
 import logging
-from log import log_with
-from config import (get_resolver_types, get_resolver_classes)
+from .log import log_with
+from .config import (get_resolver_types, get_resolver_classes)
 from privacyidea.lib.usercache import delete_user_cache
 from ..models import (Resolver,
                       ResolverConfig)
@@ -92,11 +95,12 @@ def save_resolver(params):
     # check the type
     resolvertypes = get_resolver_types()
     if resolvertype not in resolvertypes:
-            raise Exception("resolver type : {0!s} not in {1!s}".format(resolvertype, unicode(resolvertypes)))
+            raise Exception("resolver type : {0!s} not in {1!s}".format(resolvertype,
+                                                                        six.text_type(resolvertypes)))
 
     # check the name
     resolvers = get_resolver_list(filter_resolver_name=resolvername)
-    for r_name, resolver in resolvers.items():
+    for r_name, resolver in six.iteritems(resolvers):
         if resolver.get("type") == resolvertype:
             # We found the resolver with the same name and the same type,
             # So we will update this resolver
@@ -141,7 +145,7 @@ def save_resolver(params):
             _missing = True
     if _missing:
         raise Exception("type or description without necessary data! {0!s}".format(
-                        unicode(params)))
+                        six.text_type(params)))
 
     # Everything passed. So lets actually create the resolver in the DB
     if update_resolver:
@@ -152,7 +156,7 @@ def save_resolver(params):
                             params.get("type"))
         resolver_id = resolver.save()
     # create the config
-    for key, value in data.items():
+    for key, value in six.iteritems(data):
         if types.get(key) == "password":
             value = encryptPassword(value)
         ResolverConfig(resolver_id=resolver_id,
@@ -188,7 +192,7 @@ def get_resolver_list(filter_resolver_type=None,
     resolvers = g.config_object.resolver
     if filter_resolver_type:
         reduced_resolvers = {}
-        for reso_name, reso in resolvers.iteritems():
+        for reso_name, reso in six.iteritems(resolvers):
             if reso.get("type") == filter_resolver_type:
                 reduced_resolvers[reso_name] = resolvers[reso_name]
         resolvers = reduced_resolvers
@@ -201,13 +205,13 @@ def get_resolver_list(filter_resolver_type=None,
     if editable is not None:
         reduced_resolvers = {}
         if editable is True:
-            for reso_name, reso in resolvers.iteritems():
+            for reso_name, reso in six.iteritems(resolvers):
                 check_editable = is_true(reso["data"].get("Editable")) or \
                                  is_true(reso["data"].get("EDITABLE"))
                 if check_editable:
                     reduced_resolvers[reso_name] = resolvers[reso_name]
         elif editable is False:
-            for reso_name, reso in resolvers.iteritems():
+            for reso_name, reso in six.iteritems(resolvers):
                 check_editable = is_true(reso["data"].get("Editable")) or \
                                  is_true(reso["data"].get("EDITABLE"))
                 if not check_editable:

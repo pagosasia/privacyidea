@@ -3,6 +3,7 @@ This file tests the web UI for creating certificate requests
 
 implementation is contained webui/certificate.py
 """
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 import os

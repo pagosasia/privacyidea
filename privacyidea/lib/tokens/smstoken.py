@@ -38,6 +38,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """The SMS token sends an SMS containing an OTP via some kind of
 gateway. The gateways can be an SMTP or HTTP gateway or the special sipgate
 protocol.

@@ -4,9 +4,11 @@ This test file tests the lib.tokens.sshkeytoken
 This depends on lib.tokenclass
 """
 
+from __future__ import absolute_import
 from .base import MyTestCase
 from privacyidea.lib.tokens.sshkeytoken import SSHkeyTokenClass
 from privacyidea.models import Token
+import six
 
 
 class SSHTokenTestCase(MyTestCase):
@@ -69,4 +71,4 @@ RyMSQe4mn8oHJma2VzepBRBpLt7Q==
         token = SSHkeyTokenClass(db_token)
         sshkey = token.get_sshkey()
         self.assertTrue(sshkey == self.sshkey, sshkey)
-        self.assertIsInstance(sshkey, unicode)
+        self.assertIsInstance(sshkey, six.text_type)

@@ -3,6 +3,7 @@ This test file tests the lib.resolvers.py
 
 The lib.resolvers.py only depends on the database model.
 """
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 
@@ -53,7 +54,7 @@ class ResolverTestCase(MyTestCase):
         realms = get_realms()
         self.assertTrue(self.realm1 in realms, realms)
         self.assertTrue(realms.get("realm1").get("default"), realms)
-        self.assertTrue(self.realm_dot in realms.keys())
+        self.assertTrue(self.realm_dot in list(realms.keys()))
 
         # delete dot realm
         delete_realm(self.realm_dot)
@@ -74,7 +75,7 @@ class ResolverTestCase(MyTestCase):
     def test_03_get_specific_realm(self):
         realm = get_realms(self.realm1)
         self.assertTrue(self.realm1 in realm, realm)
-        self.assertTrue(len(realm.keys()) == 1, realm)
+        self.assertTrue(len(list(realm.keys())) == 1, realm)
         
     def test_02_set_default_realm(self):
         (added, failed) = set_realm("realm2",

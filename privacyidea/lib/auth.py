@@ -21,6 +21,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
+from __future__ import print_function
 from privacyidea.models import Admin
 from privacyidea.lib.token import check_user_pass
 from privacyidea.lib.policydecorators import libpolicy, login_mode
@@ -71,9 +73,9 @@ def create_db_admin(app, username, email=None, password=None):
 def list_db_admin():
     admins = Admin.query.all()
     print("Name \t email")
-    print(30*"=")
+    print((30*"="))
     for admin in admins:
-        print("{0!s} \t {1!s}".format(admin.username, admin.email))
+        print(("{0!s} \t {1!s}".format(admin.username, admin.email)))
 
 
 def get_db_admins():
@@ -86,7 +88,7 @@ def get_db_admin(username):
 
 
 def delete_db_admin(username):
-    print("Deleting admin {0!s}".format(username))
+    print(("Deleting admin {0!s}".format(username)))
     Admin.query.filter(Admin.username == username).first().delete()
 
 

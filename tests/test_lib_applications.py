@@ -2,6 +2,7 @@
 This test file tests the applications definitions standalone
 lib/applications/*
 """
+from __future__ import absolute_import
 from privacyidea.lib.error import ParameterError
 from .base import MyTestCase
 from privacyidea.lib.applications import MachineApplicationBase
@@ -180,8 +181,8 @@ class BaseApplicationTestCase(MyTestCase):
 
     def test_04_get_application_types(self):
         apps = get_application_types()
-        self.assertTrue("luks" in apps.keys())
-        self.assertTrue("ssh" in apps.keys())
+        self.assertTrue("luks" in list(apps.keys()))
+        self.assertTrue("ssh" in list(apps.keys()))
         self.assertEqual(apps["ssh"]["options"]["optional"], ["user"])
         self.assertEqual(apps["luks"]["options"]["optional"], ["slot",
                                                                "partition"])

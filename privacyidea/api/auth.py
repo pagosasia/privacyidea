@@ -28,6 +28,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 __doc__ = """This REST API is used to authenticate the users. A user needs to
 authenticate when he wants to use the API for administrative tasks like
 enrolling a token.
@@ -288,12 +289,12 @@ def get_auth_token():
 
     token = jwt.encode({"username": loginname,
                         "realm": realm,
-                        "nonce": nonce,
+                        "nonce": nonce.decode('utf8'),
                         "role": role,
                         "authtype": authtype,
                         "exp": datetime.utcnow() + validity,
                         "rights": rights},
-                       secret)
+                       secret).decode('utf8')
 
     # Add the role to the response, so that the WebUI can make decisions
     # based on this (only show selfservice, not the admin part)

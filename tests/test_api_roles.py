@@ -4,6 +4,7 @@ selfservice) on the REST API.
 
 implementation is contained in api/auth.py, api/token.py api/audit.py
 """
+from __future__ import absolute_import
 import json
 from .base import MyTestCase
 from privacyidea.lib.error import (TokenAdminError, UserError)
