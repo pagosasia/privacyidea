@@ -25,9 +25,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from __future__ import absolute_import
-import six
-__doc__="""The config module takes care about storing server configuration in
+
+"""The config module takes care about storing server configuration in
 the Config database table.
 
 It provides functions to retrieve (get) and and set configuration.
@@ -35,6 +34,8 @@ It provides functions to retrieve (get) and and set configuration.
 The code is tested in tests/test_lib_config
 """
 
+from __future__ import absolute_import
+import six
 import sys
 import logging
 import inspect

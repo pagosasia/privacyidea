@@ -704,9 +704,13 @@ class Sign(object):
         """
         Create a signature of the string s
 
+        :param: s: The string for which the signature should be calculated
+        :type s: (unicode) string
         :return: The signature of the string
-        :rtype: long
+        :rtype: str
         """
+        if type(s) is not bytes:
+            s = s.encode('utf8')
         RSAkey = RSA.importKey(self.private)
         if SIGN_WITH_RSA:
             hashvalue = HashFunc.new(s).digest()

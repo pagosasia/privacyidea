@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
 import logging
@@ -7,6 +8,7 @@ basedir = "/".join(basedir.split("/")[:-1]) + "/"
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQL_ALCHEMY_DATABASE_URI = "mysql://privacyidea:XmbSrlqy5d4IS08zjz"
     # "GG5HTt40Cpf5@localhost/privacyidea"
     PI_ENCFILE = os.path.join(basedir, "tests/testdata/enckey")
