@@ -35,7 +35,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
         # list servers
@@ -44,7 +44,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             server_list = data.get("result").get("value")
             self.assertEqual(len(server_list), 1)
             server1 = server_list.get("server1")
@@ -65,7 +65,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             server_list = data.get("result").get("value")
             self.assertEqual(len(server_list), 0)
 
@@ -86,7 +86,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
     def test_03_radiusserver_user(self):
@@ -123,7 +123,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
         # User is allowed to list the radius servers
@@ -132,7 +132,7 @@ class RADIUSServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             server_list = data.get("result").get("value")
             self.assertEqual(len(server_list), 1)
             # The user does not get any information about the server!

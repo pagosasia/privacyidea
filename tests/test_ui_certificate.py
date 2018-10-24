@@ -36,7 +36,7 @@ class WebUICertificateTestCase(MyTestCase):
                                                  "password": "test"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             authtoken = result.get("value")
@@ -82,7 +82,7 @@ class WebUICertificateTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
 
@@ -94,7 +94,7 @@ class WebUICertificateTestCase(MyTestCase):
                                                  "password": "test"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             authtoken = result.get("value")

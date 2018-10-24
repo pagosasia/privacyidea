@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import hashlib
-import json
 import binascii
 import base64
 import time

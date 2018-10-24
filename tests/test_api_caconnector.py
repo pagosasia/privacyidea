@@ -26,7 +26,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
 
@@ -43,7 +43,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
 
@@ -59,7 +59,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             value = result["value"]
             self.assertEqual(len(value), 1)
@@ -74,7 +74,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             value = result["value"]
             self.assertEqual(len(value), 2)
@@ -86,7 +86,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             value = result["value"]
             self.assertEqual(len(value), 1)
@@ -101,7 +101,7 @@ class CAConnectorTestCase(MyTestCase):
                                                  "password": "test"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             at_user = result.get("value").get("token")
@@ -116,7 +116,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             value = result["value"]
             self.assertEqual(len(value), 2)
@@ -129,7 +129,7 @@ class CAConnectorTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             value = result["value"]
             self.assertEqual(value, 1)

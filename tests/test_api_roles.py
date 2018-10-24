@@ -46,7 +46,7 @@ class APIAuthTestCase(MyTestCase):
                                                  "password": "testpw"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             self.at_admin = result.get("value").get("token")
@@ -62,7 +62,7 @@ class APIAuthTestCase(MyTestCase):
                                                         self.at_admin}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue("4eyes" in result.get("value"))
             self.assertTrue("hotp" in result.get("value"))
             self.assertTrue(result.get("status"), res.data)
@@ -79,7 +79,7 @@ class APIAuthTestCase(MyTestCase):
                                                              "testadmin"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue("token" in result.get("value"))
             self.assertTrue("username" in result.get("value"))
             self.assertEqual(result.get("value").get("role"), "admin")
@@ -93,7 +93,7 @@ class APIAuthTestCase(MyTestCase):
                                                              "cornelius"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue("token" in result.get("value"))
             self.assertTrue("username" in result.get("value"))
             self.assertEqual(result.get("value").get("role"), "user")
@@ -113,7 +113,7 @@ class APIAuthTestCase(MyTestCase):
                                                      "cornelius@adminrealm"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue("token" in result.get("value"))
             self.assertTrue("username" in result.get("value"))
             # ...and will have the role admin
@@ -138,7 +138,7 @@ class APIAuthTestCase(MyTestCase):
                                                         self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             # In the result list should only be users from reso3.
             for user in result.get("value"):
                 self.assertEqual(user.get("resolver"), self.resolvername3)
@@ -166,7 +166,7 @@ class APIAuthChallengeResponse(MyTestCase):
                                                  "password": "pin"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 401, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertFalse(data.get("result").get("status"))
             detail = data.get("detail")
             self.assertTrue("enter otp" in detail.get("message"), detail.get("message"))
@@ -180,7 +180,7 @@ class APIAuthChallengeResponse(MyTestCase):
                                                  "transaction_id": transaction_id}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value").get("username"), "selfservice")
 
 
@@ -220,7 +220,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                  "password": "testpw"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             self.at_admin = result.get("value").get("token")
@@ -244,7 +244,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                  "password": "test"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # In self.at_user we store the user token
             self.at_admin = result.get("value").get("token")
@@ -330,7 +330,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             value = response.get("result").get("value")
             self.assertEqual(len(value), 1)
             self.assertEqual(value[0].get("username"), "selfservice")
@@ -342,7 +342,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             value = response.get("result").get("value")
             self.assertEqual(len(value), 1)
             self.assertEqual(value[0].get("username"), "selfservice")
@@ -362,7 +362,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
             serial = response.get("detail").get("serial")
@@ -382,7 +382,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
         # check if there is no token left
@@ -398,7 +398,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertFalse(response.get("result").get("value"),
                             response.get("result"))
         # check if the token still exists!
@@ -415,7 +415,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertFalse(response.get("result").get("value"),
                              response.get("result"))
         # check if the token still is enabled!
@@ -445,7 +445,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertFalse(response.get("result").get("value"),
                             response.get("result"))
         tokenobject = get_tokens(serial=self.foreign_serial)[0]
@@ -458,7 +458,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
 
@@ -472,7 +472,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
 
@@ -491,7 +491,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value") == 0,
                             response.get("result"))
 
@@ -509,7 +509,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
 
@@ -525,7 +525,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
 
@@ -562,7 +562,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value") == 0,
                             response.get("result"))
         # failcounter still on
@@ -576,7 +576,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
         # failcounter still on
@@ -594,7 +594,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value") == 0,
                             response.get("result"))
 
@@ -607,7 +607,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                         self.at_user}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            response = json.loads(res.data)
+            response = res.get_json()
             self.assertTrue(response.get("result").get("value"),
                             response.get("result"))
 
@@ -682,7 +682,7 @@ class APISelfserviceTestCase(MyTestCase):
                                                  "password": "test"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result.get("status"), res.data)
             # Test logout time
             self.assertEqual(result.get("value").get("logout_time"), 200)

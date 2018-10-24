@@ -502,8 +502,8 @@ class TiQRTokenTestCase(MyTestCase):
                                                "pass": pin})):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
-            detail = json.loads(res.data).get("detail")
+            result = res.get_json().get("result")
+            detail = res.get_json().get("detail")
             self.assertTrue(result.get("status") is True, result)
             self.assertTrue(result.get("value") is False, result)
             transaction_id = detail.get("transaction_id")

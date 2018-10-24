@@ -169,8 +169,8 @@ def sign_response(request, response):
         if nonce:
             content["nonce"] = nonce
 
-        content["signature"] = sign_object.sign(content.get_json())
-        response_object.data = content.get_json()
+        content["signature"] = sign_object.sign(json.dumps(content))
+        response_object.data = json.dumps(content)
     except ValueError:
         # The response.data is no JSON (but CSV or policy export)
         # We do no signing in this case.

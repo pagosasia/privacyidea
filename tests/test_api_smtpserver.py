@@ -35,7 +35,7 @@ class SMTPServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
         # list servers
@@ -44,7 +44,7 @@ class SMTPServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             server_list = data.get("result").get("value")
             self.assertEqual(len(server_list), 1)
             server1 = server_list.get("server1")
@@ -66,7 +66,7 @@ class SMTPServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             server_list = data.get("result").get("value")
             self.assertEqual(len(server_list), 0)
 
@@ -88,6 +88,6 @@ class SMTPServerTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 

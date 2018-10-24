@@ -83,7 +83,7 @@ class RegisterTestCase(MyTestCase):
                                                      "cornelius@privacyidea.org"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 400, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("error").get("code"), ERROR.REGISTRATION)
             self.assertEqual(data.get("result").get("error").get("message"),
                          u'ERR402: No SMTP server configuration specified!')
@@ -120,7 +120,7 @@ class RegisterTestCase(MyTestCase):
                                            method='GET'):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
     @smtpmock.activate
@@ -135,7 +135,7 @@ class RegisterTestCase(MyTestCase):
                                                      "cornelius@privacyidea.org"}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res.data)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
     @smtpmock.activate
@@ -156,7 +156,7 @@ class RegisterTestCase(MyTestCase):
                                                  "password": new_password}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res.data)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), True)
 
         # send an invalid recoverycode
@@ -168,7 +168,7 @@ class RegisterTestCase(MyTestCase):
                                                  "password": new_password}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res.data)
-            data = json.loads(res.data)
+            data = res.get_json()
             self.assertEqual(data.get("result").get("value"), False)
 
         # test the new password

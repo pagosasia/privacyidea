@@ -17,8 +17,8 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
-            detail = json.loads(res.data).get("detail")
+            result = res.get_json().get("result")
+            detail = res.get_json().get("detail")
             self.assertFalse(result.get("value"), result)
             self.assertEqual("Not Implemented", detail.get("description"))
 
@@ -32,7 +32,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
 
@@ -41,7 +41,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue("machineresolver1" in result["value"], result)
             self.assertTrue("filename" in result["value"]["machineresolver1"][
@@ -53,7 +53,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             # The value is empty
             self.assertTrue(result["value"] == {}, result)
@@ -64,7 +64,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             value = result.get("value")
             self.assertTrue("machineresolver1" in value, value)
 
@@ -73,7 +73,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            method='GET',
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
             self.assertTrue("machineresolver1" in result["value"], result)
@@ -87,7 +87,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue("machineresolver1" in result["value"], result)
             self.assertTrue("filename" in result["value"]["machineresolver1"][
@@ -99,7 +99,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             print((res.data))
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
@@ -110,7 +110,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             print((res.data))
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
             # Trying to delete a non existing resolver returns -1
@@ -128,7 +128,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
 
@@ -137,7 +137,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(result["status"] is True, result)
             self.assertTrue("machineresolver2" in result["value"], result)
             self.assertTrue("LDAPURI" in result["value"]["machineresolver2"][
@@ -149,7 +149,7 @@ class APIMachineResolverTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             print((res.data))
-            result = json.loads(res.data).get("result")
+            result = res.get_json().get("result")
             self.assertTrue(res.status_code == 200, res)
             self.assertTrue(result["status"] is True, result)
             self.assertTrue(result["value"] == 1, result)
