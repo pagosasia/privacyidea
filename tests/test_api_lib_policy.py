@@ -41,7 +41,7 @@ from privacyidea.lib.user import User
 from privacyidea.lib.tokens.papertoken import PAPERACTION
 from privacyidea.lib.tokens.tantoken import TANACTION
 
-from flask import Response, Request, g, current_app
+from flask import Response, Request, g, current_app, jsonify
 from werkzeug.test import EnvironBuilder
 from privacyidea.lib.error import PolicyError, RegistrationError
 from privacyidea.lib.machineresolver import save_resolver
@@ -1282,7 +1282,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "PISP0000AB00",
                           "type": "spass"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does not allow the tokentype
         set_policy(name="pol1",
@@ -1329,7 +1329,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "id": 1,
                "detail": {"message": "matching 2 tokens",
                           "type": "undetermined"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does not allow the tokentype
         set_policy(name="pol1",
@@ -1365,7 +1365,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "PISP0001",
                           "type": "spass"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does match
         set_policy(name="pol1",
@@ -1423,7 +1423,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "HOTP123456",
                           "type": "hotp"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does not allow the tokentype
         set_policy(name="pol1",
@@ -1468,7 +1468,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "HOTP123456",
                           "type": "hotp"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does not allow the detail on success
         set_policy(name="pol2",
@@ -1499,7 +1499,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "HOTP123456",
                           "type": "hotp"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set a policy, that does not allow the detail on success
         set_policy(name="pol2",
@@ -1520,7 +1520,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "HOTP123456",
                           "type": "hotp"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         new_response = no_detail_on_fail(req, resp)
         jresult = json.loads(new_response.data)
@@ -1549,7 +1549,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "HOTP123456",
                           "type": "hotp"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         g.policy_object = PolicyClass()
 
@@ -1619,7 +1619,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                           "value": False},
                "version": "privacyIDEA test",
                "id": 1}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set the autoassign policy
         # to "any_pin"
@@ -1679,7 +1679,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                           "value": False},
                "version": "privacyIDEA test",
                "id": 1}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # Set the autoassign policy
         # to "userstore"
@@ -1745,7 +1745,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "version": "privacyIDEA test",
                "detail": {"serial": serial},
                "id": 1}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         new_response = offline_info(req, resp)
         jresult = json.loads(new_response.data)
@@ -1794,7 +1794,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                           "value": True},
                "version": "privacyIDEA test",
                "id": 1}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
         from privacyidea.lib.crypto import Sign
         g.sign_object = Sign("tests/testdata/private.pem",
                              "tests/testdata/public.pem")
@@ -1842,7 +1842,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "version": "privacyIDEA test",
                "detail": {"serial": serial},
                "id": 1}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         new_response = get_webui_settings(req, resp)
         jresult = json.loads(new_response.data)
@@ -1938,7 +1938,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "changePIN1",
                           "type": "spass"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         # the token itself
         token = init_token({"serial": "changePIN1",
@@ -1965,7 +1965,7 @@ class PostPolicyDecoratorTestCase(MyTestCase):
                "detail": {"message": "matching 1 tokens",
                           "serial": "changePIN2",
                           "type": "spass"}}
-        resp = Response(json.dumps(res))
+        resp = jsonify(res)
 
         token = init_token({"type": "spass",
                             "serial": "changePIN2"}, tokenrealms=[self.realm1])

@@ -43,7 +43,7 @@ from __future__ import absolute_import
 import datetime
 import logging
 import six
-log = logging.getLogger(__name__)
+
 from privacyidea.lib.error import PolicyError
 from flask import g, current_app, make_response
 from privacyidea.lib.policy import SCOPE, ACTION, AUTOASSIGNVALUE
@@ -62,6 +62,7 @@ from privacyidea.lib.user import (split_user, User)
 from privacyidea.lib.realm import get_default_realm
 from privacyidea.lib.subscriptions import subscription_status
 
+log = logging.getLogger(__name__)
 
 optional = True
 required = False
