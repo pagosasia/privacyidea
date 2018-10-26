@@ -46,6 +46,7 @@ or to webservices!
 This code is tested in tests/test_lib_user.py
 '''
 import six
+from future.utils import python_2_unicode_compatible
 
 import logging
 import traceback
@@ -70,6 +71,7 @@ log = logging.getLogger(__name__)
 
 
 @log_with(log)
+@python_2_unicode_compatible
 class User(object):
     """
     The user has the attributes
@@ -137,7 +139,7 @@ class User(object):
                                                 other.resolver) and (
                 self.realm == other.realm)
 
-    def __text_type__(self):
+    def __str__(self):
         ret = u"<empty user>"
         if not self.is_empty():
             login = self.login
@@ -149,9 +151,6 @@ class User(object):
                 conf = u'.{0!s}'.format(self.resolver)
             ret = u'<{0!s}{1!s}@{2!s}>'.format(login, conf, self.realm)
         return ret
-
-    def __str__(self):
-        return self.__text_type__()
 
     def __repr__(self):
         ret = ('User(login={0!r}, realm={1!r}, resolver={2!r})'.format(

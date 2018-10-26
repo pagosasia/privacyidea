@@ -830,6 +830,8 @@ def hash_password(password, hashtype):
     :param hashtype: One of the hash types as string
     :return: The hashed password
     """
+    if isinstance(password, six.text_type):
+        password = password.encode('utf8')
     hashtype = hashtype.upper()
     if hashtype == "PHPASS":
         PH = PasswordHash()
@@ -848,7 +850,7 @@ def hash_password(password, hashtype):
         hr = hashlib.sha256(password)
         hr.update(salt)
         pw = b64encode(hr.digest() + salt)
-        return "{SSHA256}" + pw
+        return b"{SSHA256}" + pw
     elif hashtype == "SSHA512":
         salt = geturandom(64)
         hr = hashlib.sha512(password)
@@ -883,7 +885,7 @@ def check_ssha(pw_hash, password, hashfunc, length):
 def check_sha(pw_hash, password):
     b64_db_password = pw_hash[5:]
     hr = hashlib.sha1(password).digest()
-    b64_password = b64encode(hr)
+    b64_password = b64encode(hr).decode('utf8')
     return b64_password == b64_db_password
 
 

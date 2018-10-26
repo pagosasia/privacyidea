@@ -32,8 +32,8 @@ class APIUsersTestCase(MyTestCase):
                                            headers={'Authorization': self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
-            self.assertTrue('"status": true' in res.data, res.data)
-            self.assertTrue('"value": []' in res.data, res.data)
+            self.assertTrue(b'"status": true' in res.data, res.data)
+            self.assertTrue(b'"value": []' in res.data, res.data)
 
     def test_01_get_passwd_user(self):
         # create resolver

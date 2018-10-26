@@ -379,11 +379,11 @@ class APIMachinesTestCase(MyTestCase):
             response = offline_auth_item.get("response")
             self.assertEqual(len(response), 17)
             self.assertEqual(token_obj.token.count, 35) # 17 + 17 + 1, because we consumed 447589
-            self.assertTrue(passlib.hash. \
+            self.assertTrue(passlib.hash.
                             pbkdf2_sha512.verify("test903435", # count = 18
-                                                 response.get('18')))
-            self.assertTrue(passlib.hash. \
+                                                 response.get(18)))
+            self.assertTrue(passlib.hash.
                             pbkdf2_sha512.verify("test749439", # count = 34
-                                                 response.get('34')))
+                                                 response.get(34)))
         self.assertEqual(token_obj.check_otp('747439'), -1) # count = 34
         self.assertEqual(token_obj.check_otp('037211'), 35) # count = 35

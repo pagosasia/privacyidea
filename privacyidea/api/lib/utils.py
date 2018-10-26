@@ -241,7 +241,9 @@ def get_all_params(param, body):
 
     # In case of serialized JSON data in the body, add these to the values.
     try:
-        json_data = body.get_json()
+        if not isinstance(body, six.string_types):
+            body.decode('utf8')
+        json_data = json.loads(body)
         for k, v in json_data.items():
             return_param[k] = v
     except Exception as exx:

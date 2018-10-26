@@ -191,13 +191,13 @@ class IdResolver (UserIdResolver):
         :param uid: The uid of the user
         :type uid: int
         :param password: The password in cleartext
-        :type password: sting
+        :type password: string
         :return: True or False
         :rtype: bool
         """
         log.info("checking password for user uid {0!s}".format(uid))
         if isinstance(password, six.text_type):
-            password = password.encode(ENCODING)
+            password = str(password)
         cryptedpasswd = self.passDict[uid]
         log.debug("We found the crypted pass {0!s} for uid {1!s}".format(cryptedpasswd, uid))
         if cryptedpasswd:

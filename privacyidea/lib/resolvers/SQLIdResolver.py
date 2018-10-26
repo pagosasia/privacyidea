@@ -25,6 +25,8 @@
 #
 from __future__ import absolute_import
 import six
+from past.builtins import basestring
+
 __doc__ = """This is the resolver to find users in SQL databases.
 
 The file is tested in tests/test_lib_resolver.py
@@ -284,7 +286,9 @@ class IdResolver (UserIdResolver):
             try:
                 raw_value = r.get(self.map.get(key))
                 if raw_value:
-                    if type(raw_value) == str:
+                    if not isinstance(raw_value, basestring):
+                        raw_value = str(raw_value)
+                    if not isinstance(raw_value, six.text_type):
                         val = raw_value.decode(self.encoding)
                     else:
                         val = raw_value

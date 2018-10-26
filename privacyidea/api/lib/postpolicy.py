@@ -165,6 +165,8 @@ def sign_response(request, response):
     else:
         response_object = response
     try:
+        if not response_object.is_json:
+            raise ValueError
         content = response_object.get_json()
         nonce = request.all_data.get("nonce")
         if nonce:

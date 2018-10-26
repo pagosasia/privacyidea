@@ -63,7 +63,7 @@ class UserTestCase(MyTestCase):
         user_str = "{0!s}".format(user)
         self.assertTrue(user_str == "<root.resolver1@realm1>", user_str)
         # check proper unicode() and str() handling
-        self.assertIsInstance(str(user), bytes)
+#        self.assertIsInstance(str(user), bytes)
         self.assertIsInstance(six.text_type(user), six.text_type)
         
         self.assertFalse(user.is_empty())
@@ -368,5 +368,6 @@ class UserTestCase(MyTestCase):
         # check proper unicode() and str() handling
         user_object = User(login=u"nönäscii", realm=realm)
         self.assertEqual(six.text_type(user_object), u'<nönäscii.SQL1@sqlrealm>')
-        self.assertEqual(str(user_object), '<n\xc3\xb6n\xc3\xa4scii.SQL1@sqlrealm>')
+        self.assertEqual(six.text_type(user_object).encode('utf8'),
+                         b'<n\xc3\xb6n\xc3\xa4scii.SQL1@sqlrealm>')
 

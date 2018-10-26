@@ -43,29 +43,32 @@ This only depends on the ConfigPolicy.
 """
 
 from __future__ import absolute_import
+from past.builtins import basestring
 import binascii
 import base64
 
 import logging
 import six
-log = logging.getLogger(__name__)
 from six.moves.urllib.parse import quote
 from privacyidea.lib.log import log_with
 from privacyidea.lib.user import User
+
+log = logging.getLogger(__name__)
 
 MAX_QRCODE_LEN = 180
 
 
 def _construct_extra_parameters(extra_data):
     """
-    Given a dictionary of extra key-value pairs (all unicode strings),
+    Given a dictionary of extra key-value pairs (all unicode strings or numbers),
     return a string that may be appended to a google authenticator / oathtoken URL.
     Keys and values are converted to strings and urlquoted. Unicodes are converted to UTF-8.
     :return: a string (may be empty if ``extra_data`` is empty
     """
     extra_data_list = []
     for key, value in six.iteritems(extra_data):
-        value = str(value)
+        if not isinstance(value, basestring):
+            value = str(value)
         if isinstance(key, six.text_type):
             key = key.encode('utf-8')
         if isinstance(value, six.text_type):

@@ -112,10 +112,10 @@ def check_copy_serials(func):
         tokenobject_list_to = get_tokens(serial=args[1])
         if len(tokenobject_list_from) != 1:
             log.error("not a unique token to copy from found")
-            raise TokenAdminError
+            raise TokenAdminError("No unique token to copy from found", id=1016)
         if len(tokenobject_list_to) != 1:
             log.error("not a unique token to copy to found")
-            raise TokenAdminError
+            raise TokenAdminError("No unique token to copy to found", id=1017)
 
         f_result = func(*args, **kwds)
         return f_result
