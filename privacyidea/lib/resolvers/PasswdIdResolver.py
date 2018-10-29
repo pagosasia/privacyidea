@@ -197,7 +197,7 @@ class IdResolver (UserIdResolver):
         """
         log.info("checking password for user uid {0!s}".format(uid))
         if isinstance(password, six.text_type):
-            password = str(password)
+            password = password.encode('utf8')
         cryptedpasswd = self.passDict[uid]
         log.debug("We found the crypted pass {0!s} for uid {1!s}".format(cryptedpasswd, uid))
         if cryptedpasswd:

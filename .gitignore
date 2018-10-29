@@ -5,6 +5,7 @@
 *.pyc
 dist/
 venv/
+build/
 .coverage
 cover/
 *~

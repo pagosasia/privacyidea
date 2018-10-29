@@ -478,7 +478,7 @@ class Connection(object):
         deDuped = list()
         for entry in results:
             dn = entry.get("dn")
-            if not dn in list(found.keys()):
+            if not dn in found:
                 found[dn] = 1
                 deDuped.append(entry)
 
