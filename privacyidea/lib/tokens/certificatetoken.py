@@ -265,7 +265,7 @@ class CertificateTokenClass(TokenClass):
         # TODO define a random passphrase and hand it to the user
         passphrase = self.token.get_pin()
         if passphrase == -1:
-            passphrase = ""
+            passphrase = b""
         pkcs12_bin = pkcs12.export(passphrase=passphrase)
         return pkcs12_bin
 

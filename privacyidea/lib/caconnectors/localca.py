@@ -38,7 +38,7 @@ import shlex
 import re
 import logging
 import os
-from six import string_types
+from six import string_types, text_type
 from six.moves import input
 
 log = logging.getLogger(__name__)
@@ -201,7 +201,7 @@ def _get_crl_next_update(filename):
     # Unfortunately pyOpenSSL does not support this. so we dump the
     # CRL and parse the text :-/
     # We do not want to add dependency to pyasn1
-    crl_text = crypto.dump_crl(crypto.FILETYPE_TEXT, crl_obj)
+    crl_text = crypto.dump_crl(crypto.FILETYPE_TEXT, crl_obj).decode('utf8')
     for line in crl_text.split("\n"):
         if "Next Update: " in line:
             key, value = line.split(":", 1)
@@ -336,10 +336,10 @@ class LocalCAConnector(BaseCAConnector):
         :rtype: basestring
         """
         name_components = x509_name.get_components()
-        filename = ""
+        filename = b""
         for (key, value) in name_components:
-            filename += value+"_"
-        filename = filename[:-1] + "." + file_extension
+            filename += value + b"_"
+        filename = filename[:-1].decode('utf8') + "." + file_extension
         return filename
 
     def sign_request(self, csr, options=None):
@@ -402,15 +402,9 @@ class LocalCAConnector(BaseCAConnector):
                 csr_obj.get_subject(), file_extension="pem")
             #csr_extensions = csr_obj.get_extensions()
         csr_filename = csr_filename.replace(" ", "_")
-        if type(csr_filename) == str:
-            csr_filename = csr_filename.decode("utf-8")
-        csr_filename = csr_filename.encode("ascii", "ignore")
         certificate_filename = certificate_filename.replace(" ", "_")
-        if type(certificate_filename) == str:
-            certificate_filename = certificate_filename.decode("utf-8")
-        certificate_filename = certificate_filename.encode("ascii", "ignore")
         # dump the file
-        with open(csrdir + "/" + csr_filename, "w") as f:
+        with open(os.path.join(csrdir, csr_filename), "w") as f:
             f.write(csr)
 
         # TODO: use the template name to set the days and the extention!
@@ -418,15 +412,14 @@ class LocalCAConnector(BaseCAConnector):
             cmd = CA_SIGN_SPKAC.format(cakey=self.cakey, cacert=self.cacert,
                                        days=days, config=config,
                                        extension=extension,
-                                       spkacfile=csrdir + "/" + csr_filename,
-                                       certificate=certificatedir + "/" +
-                                                   certificate_filename)
+                                       spkacfile=os.path.join(csrdir, csr_filename),
+                                       certificate=os.path.join(certificatedir,
+                                                                certificate_filename))
         else:
             cmd = CA_SIGN.format(cakey=self.cakey, cacert=self.cacert,
                                  days=days, config=config, extension=extension,
-                                 csrfile=csrdir + "/" + csr_filename,
-                                 certificate=certificatedir + "/" +
-                                             certificate_filename)
+                                 csrfile=os.path.join(csrdir, csr_filename),
+                                 certificate=os.path.join(certificatedir,  certificate_filename))
         # run the command
         args = shlex.split(cmd)
         p = Popen(args, stdout=PIPE, stderr=PIPE, cwd=workingdir)
@@ -435,7 +428,7 @@ class LocalCAConnector(BaseCAConnector):
             # Some error occurred
             raise CAError(error)
 
-        with open(certificatedir + "/" + certificate_filename, "r") as f:
+        with open(os.path.join(certificatedir, certificate_filename), "rb") as f:
             certificate = f.read()
 
         # We return the cert_obj.

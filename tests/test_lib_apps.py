@@ -34,7 +34,7 @@ class AppsTestCase(MyTestCase):
 
     def test_02_extra_data(self):
         extra_data = {
-            'somekey': 'somevalue',
+            b'somekey': b'somevalue',
             u'sömekey': u'sömevälue',
             'anotherkey': 12345,
         }

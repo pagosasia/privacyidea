@@ -885,13 +885,13 @@ def set_policy(name=None, scope=None, action=None, realm=None, resolver=None,
     :return: The database ID od the the policy
     :rtype: int
     """
-    if type(active) in [str, unicode]:
+    if isinstance(active, string_types):
         active = active.lower() == "true"
-    if type(priority) in [str, unicode]:
+    if isinstance(priority, string_types):
         priority = int(priority)
     if priority is not None and priority <= 0:
         raise ParameterError("Priority must be at least 1")
-    if type(check_all_resolvers) in [str, unicode]:
+    if isinstance(check_all_resolvers, string_types):
         check_all_resolvers = check_all_resolvers.lower() == "true"
     if type(action) == dict:
         action_list = []

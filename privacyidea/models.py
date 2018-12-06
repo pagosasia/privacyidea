@@ -55,6 +55,8 @@ from sqlalchemy.schema import Sequence
 from .lib.log import log_with
 from .lib.utils import is_true, convert_column_to_unicode
 
+from six import string_types, python_2_unicode_compatible
+
 log = logging.getLogger(__name__)
 
 #
@@ -117,6 +119,7 @@ class TimestampMethodsMixin(object):
         return ret
 
 
+@python_2_unicode_compatible
 class Token(MethodsMixin, db.Model):
     """
     The table "token" contains the basic token data like
@@ -248,8 +251,9 @@ class Token(MethodsMixin, db.Model):
         Also avoids running into errors, if the data is a None Type.
 
         :param data: a string from the database
-        :type data: usually a string
+        :type data: str
         :return: a stripped string
+        :rtype: str
         """
         if data:
             data = data.strip()
@@ -259,13 +263,18 @@ class Token(MethodsMixin, db.Model):
     @log_with(log)
     def set_otpkey(self, otpkey, reset_failcount=True):
         iv = geturandom(16)
+        # encrypt expects its data as a byte string
+        try:
+            otpkey = otpkey.encode('utf8')
+        except AttributeError as _e:
+            pass
         enc_otp_key = encrypt(otpkey, iv)
-        self.key_enc = unicode(binascii.hexlify(enc_otp_key))
+        self.key_enc = binascii.hexlify(enc_otp_key).decode('utf8')
         length = len(self.key_enc)
         if length > Token.key_enc.property.columns[0].type.length:
             log.error("Key {0!s} exceeds database field {1:d}!".format(self.serial,
-                                                             length))
-        self.key_iv = unicode(binascii.hexlify(iv))
+                                                                       length))
+        self.key_iv = binascii.hexlify(iv).decode('utf8')
         self.count = 0
         if reset_failcount is True:
             self.failcount = 0
@@ -314,10 +323,19 @@ class Token(MethodsMixin, db.Model):
 
     @log_with(log)
     def set_user_pin(self, userPin):
+        """
+
+        :param userPin: The user pin to set
+        :type userPin: str
+        """
         iv = geturandom(16)
+        try:
+            userPin = userPin.encode('utf8')
+        except AttributeError as _e:
+            pass
         enc_userPin = encrypt(userPin, iv)
-        self.user_pin = unicode(binascii.hexlify(enc_userPin))
-        self.user_pin_iv = unicode(binascii.hexlify(iv))
+        self.user_pin = binascii.hexlify(enc_userPin).decode('utf8')
+        self.user_pin_iv = binascii.hexlify(iv).decode('utf8')
 
     @log_with(log)
     def get_otpkey(self):
@@ -341,8 +359,8 @@ class Token(MethodsMixin, db.Model):
 
     def set_hashed_pin(self, pin):
         seed = geturandom(16)
-        self.pin_seed = unicode(binascii.hexlify(seed))
-        self.pin_hash = unicode(binascii.hexlify(hash(pin, seed)))
+        self.pin_seed = binascii.hexlify(seed).decode('utf8')
+        self.pin_hash = binascii.hexlify(hash(pin, seed)).decode('utf8')
         return self.pin_hash
 
     def get_hashed_pin(self, pin):
@@ -351,25 +369,34 @@ class Token(MethodsMixin, db.Model):
         Fix for working with MS SQL servers
         MS SQL servers sometimes return a '<space>' when the
         column is empty: ''
+
+        :param pin: The pin to hash
+        :type pin: str
+        :return: the hashed and hexlified pin
+        :rtype: bytes
         """
         seed_str = self._fix_spaces(self.pin_seed)
         seed = binascii.unhexlify(seed_str)
         hPin = hash(pin, seed)
         log.debug("hPin: {0!s}, pin: {1!r}, seed: {2!s}".format(
-            binascii.hexlify(hPin),
+            binascii.hexlify(hPin).decode('utf8'),
             pin,
             self.pin_seed))
         return binascii.hexlify(hPin)
     
     def check_hashed_pin(self, pin):
         hp = self.get_hashed_pin(pin)
-        return hp == self.pin_hash
+        return hp.decode('utf8') == self.pin_hash
         
     @log_with(log)
     def set_description(self, desc):
         if desc is None:
             desc = ""
-        self.description = unicode(desc)
+        try:
+            desc = desc.decode('utf8')
+        except AttributeError as _e:
+            pass
+        self.description = desc
         return self.description
 
     def set_pin(self, pin, hashed=True):
@@ -383,27 +410,34 @@ class Token(MethodsMixin, db.Model):
             self.set_hashed_pin(upin)
             log.debug("setPin(HASH:{0!r})".format(self.pin_hash))
         elif hashed is False:
-            self.pin_hash = "@@" + encryptPin(upin)
+            self.pin_hash = u"@@" + encryptPin(upin).decode('utf8')
             log.debug("setPin(ENCR:{0!r})".format(self.pin_hash))
         return self.pin_hash
 
     def check_pin(self, pin):
+        """
+
+        :param pin: The pin to check
+        :type pin: str
+        :return: True if the pin matches the saved value, False otherwise
+        :rtype: bool
+        """
         res = False
         # check for a valid input
         if pin is not None:
             if self.is_pin_encrypted() is True:
                 log.debug("we got an encrypted PIN!")
                 tokenPin = self.pin_hash[2:]
-                decryptTokenPin = decryptPin(tokenPin)
-                if (decryptTokenPin == pin):
+                decryptTokenPin = decryptPin(tokenPin.encode('utf8')).decode('utf8')
+                if decryptTokenPin == pin:
                     res = True
             else:
                 log.debug("we got a hashed PIN!")
                 if self.pin_hash:
-                    mypHash = self.get_hashed_pin(pin)
+                    mypHash = self.get_hashed_pin(pin).decode('utf8')
                 else:
                     mypHash = pin
-                if (mypHash == self.pin_hash):
+                if mypHash == self.pin_hash:
                     res = True
     
         return res
@@ -429,30 +463,42 @@ class Token(MethodsMixin, db.Model):
         ret = False
         if pin is None:
             pin = self.pin_hash
-        if (pin.startswith("@@") is True):
+        if pin.startswith("@@") is True:
             ret = True
         return ret
 
     def get_pin(self):
+        """
+
+        :return: the decrypted token pin
+        :rtype: bytes
+        """
         ret = -1
         if self.is_pin_encrypted() is True:
             tokenPin = self.pin_hash[2:]
-            ret = decryptPin(tokenPin)
+            ret = decryptPin(tokenPin.encode('utf8'))
         return ret
 
     def set_so_pin(self, soPin):
         """
         For smartcards this sets the security officer pin of the token
-        
-        :rtype : None
+
+        :param soPin: the security officer pin to set
+        :type soPin: str
+        :return: Tuple of encrypted pin and iv, both in utf8 strings
+        :rtype: tuple
         """
         iv = geturandom(16)
+        try:
+            soPin = soPin.encode('utf8')
+        except AttributeError as _e:
+            pass
         enc_soPin = encrypt(soPin, iv)
-        self.so_pin = unicode(binascii.hexlify(enc_soPin))
-        self.so_pin_iv = unicode(binascii.hexlify(iv))
-        return (self.so_pin, self.so_pin_iv)
+        self.so_pin = binascii.hexlify(enc_soPin).decode('utf8')
+        self.so_pin_iv = binascii.hexlify(iv).decode('utf8')
+        return self.so_pin, self.so_pin_iv
 
-    def __unicode__(self):
+    def __str__(self):
         return self.serial
 
     @log_with(log)
@@ -508,8 +554,6 @@ class Token(MethodsMixin, db.Model):
             realm_list.append(realm_entry.realm.name)
         ret['realms'] = realm_list
         return ret
-
-    __str__ = __unicode__
 
     def __repr__(self):
         '''
@@ -719,6 +763,7 @@ class Admin(db.Model):
         db.session.commit()
 
 
+@python_2_unicode_compatible
 class Config(TimestampMethodsMixin, db.Model):
     """
     The config table holds all the system configuration in key value pairs.
@@ -737,12 +782,12 @@ class Config(TimestampMethodsMixin, db.Model):
 
     @log_with(log)
     def __init__(self, Key, Value, Type=u'', Description=u''):
-        self.Key = unicode(Key)
+        self.Key = convert_column_to_unicode(Key)
         self.Value = convert_column_to_unicode(Value)
-        self.Type = unicode(Type)
-        self.Description = unicode(Description)
+        self.Type = convert_column_to_unicode(Type)
+        self.Description = convert_column_to_unicode(Description)
 
-    def __unicode__(self):
+    def __str__(self):
         return "<{0!s} ({1!s})>".format(self.Key, self.Type)
 
     def save(self):
@@ -963,10 +1008,10 @@ class ResolverConfig(TimestampMethodsMixin, db.Model):
                                        .filter_by(name=resolver)\
                                        .first()\
                                        .id
-        self.Key = unicode(Key)
+        self.Key = convert_column_to_unicode(Key)
         self.Value = convert_column_to_unicode(Value)
-        self.Type = unicode(Type)
-        self.Description = unicode(Description)
+        self.Type = convert_column_to_unicode(Type)
+        self.Description = convert_column_to_unicode(Description)
 
     def save(self):
         c = ResolverConfig.query.filter_by(resolver_id=self.resolver_id,
@@ -1191,7 +1236,7 @@ class Challenge(MethodsMixin, db.Model):
         if type(data) in [dict, list]:
             self.data = dumps(data)
         else:
-            self.data = unicode(data)
+            self.data = convert_column_to_unicode(data)
 
     def get_data(self):
         data = {}
@@ -1205,10 +1250,10 @@ class Challenge(MethodsMixin, db.Model):
         return self.session
 
     def set_session(self, session):
-        self.session = unicode(session)
+        self.session = convert_column_to_unicode(session)
 
     def set_challenge(self, challenge):
-        self.challenge = unicode(challenge)
+        self.challenge = convert_column_to_unicode(challenge)
     
     def get_challenge(self):
         return self.challenge
@@ -1258,7 +1303,7 @@ class Challenge(MethodsMixin, db.Model):
 
     def __unicode__(self):
         descr = self.get()
-        return "{0!s}".format(unicode(descr))
+        return "{0!s}".format(convert_column_to_unicode(descr))
 
     __str__ = __unicode__
 
@@ -1312,7 +1357,7 @@ class Policy(TimestampMethodsMixin, db.Model):
                  active=True, scope="", action="", realm="", adminrealm="",
                  resolver="", user="", client="", time="", condition=0, priority=1,
                  check_all_resolvers=False):
-        if type(active) in [str, unicode]:
+        if isinstance(active, string_types):
             active = is_true(active.lower())
         self.name = name
         self.action = action
@@ -1515,7 +1560,7 @@ class MachineTokenOptions(db.Model):
                                                             machinetoken_id))
         self.machinetoken_id = machinetoken_id
         self.mt_key = key
-        self.mt_value = unicode(value)
+        self.mt_value = convert_column_to_unicode(value)
 
         # if the combination machinetoken_id / mt_key already exist,
         # we need to update

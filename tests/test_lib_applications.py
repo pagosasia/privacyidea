@@ -89,7 +89,7 @@ class LUKSApplicationTestCase(MyTestCase):
                                                             challenge="123456")
         self.assertEqual(auth_item.get("challenge"), "123456")
         self.assertEqual(auth_item.get("response"),
-                         "76d624a5fdf8d84f3d19e781f0313e48c1e69165")
+                         b"76d624a5fdf8d84f3d19e781f0313e48c1e69165")
 
     def test_03_get_auth_item_unsupported(self):
         # unsupported token type

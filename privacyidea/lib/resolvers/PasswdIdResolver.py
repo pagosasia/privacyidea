@@ -189,7 +189,7 @@ class IdResolver (UserIdResolver):
         :param uid: The uid of the user
         :type uid: int
         :param password: The password in cleartext
-        :type password: sting
+        :type password: str
         :return: True or False
         :rtype: bool
         """

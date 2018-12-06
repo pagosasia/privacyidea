@@ -162,7 +162,7 @@ def sign_response(request, response):
     else:
         response_object = response
     try:
-        content = json.loads(response_object.data)
+        content = json.loads(response_object.data.decode('utf8'))
         nonce = request.all_data.get("nonce")
         if nonce:
             content["nonce"] = nonce
@@ -505,7 +505,7 @@ def get_webui_settings(request, response):
     :param response: flask response object
     :return: the response
     """
-    content = json.loads(response.data)
+    content = json.loads(response.data.decode('utf8'))
     # check, if the authentication was successful, then we need to do nothing
     if content.get("result").get("status") is True:
         role = content.get("result").get("value").get("role")

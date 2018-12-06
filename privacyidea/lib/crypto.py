@@ -63,12 +63,12 @@ except ImportError:
 import passlib.hash
 import sys
 import traceback
-from six import PY2, text_type
+from six import PY2, text_type, int2byte
 
 if not PY2:
     long = int
 
-FAILED_TO_DECRYPT_PASSWORD = "FAILED TO DECRYPT PASSWORD!"
+FAILED_TO_DECRYPT_PASSWORD = b"FAILED TO DECRYPT PASSWORD!"
 
 (ma, mi, _, _, _,) = sys.version_info
 pver = float(int(ma) + int(mi) * 0.1)
@@ -127,8 +127,6 @@ class SecretObj(object):
     def hmac_digest(self, data_input, hash_algo):
         self._setupKey_()
         if pver > 2.6:
-            # only for debugging
-            _hex_kex = binascii.hexlify(self.bkey)
             h = hmac.new(self.bkey, data_input, hash_algo).digest()
         else:
             h = hmac.new(self.bkey, str(data_input), hash_algo).digest()
@@ -258,9 +256,23 @@ class SecretObj(object):
 
 @log_with(log, log_entry=False, log_exit=False)
 def hash(val, seed, algo=None):
+    """
+
+    :param val: value to hash
+    :type val: str
+    :param seed: hash seed
+    :type seed: bytes
+    :param algo:
+    :return: the hashed and salted value
+    :rtype: bytes
+    """
     log.debug('hash()')
+    try:
+        val = val.encode('utf8')
+    except AttributeError as _e:
+        pass
     m = sha256()
-    m.update(val.encode('utf-8'))
+    m.update(val)
     m.update(seed)
     return m.digest()
 
@@ -323,15 +335,25 @@ def encryptPassword(password):
         ret = hsm.encrypt_password(to_utf8(password))
     except Exception as exx:  # pragma: no cover
         log.warning(exx)
-        ret = "FAILED TO ENCRYPT PASSWORD!"
+        ret = b"FAILED TO ENCRYPT PASSWORD!"
     return ret
 
 
 @log_with(log, log_entry=False)
 def encryptPin(cryptPin):
+    """
+
+    :param cryptPin: the pin to encrypt
+    :type cryptPin: str
+    :return: the encrypted pin
+    :rtype: bytes
+    """
     hsm = _get_hsm()
-    ret = hsm.encrypt_pin(cryptPin)
-    return ret
+    try:
+        cryptPin = cryptPin.encode('utf8')
+    except AttributeError as _e:
+        pass
+    return hsm.encrypt_pin(cryptPin)
 
 
 @log_with(log, log_exit=False)
@@ -370,6 +392,13 @@ def decryptPassword(cryptPass, convert_unicode=False):
 
 @log_with(log, log_exit=False)
 def decryptPin(cryptPin):
+    """
+
+    :param cryptPin: the encrypted pin
+    :type cryptPin: bytes
+    :return: the decrypted pin
+    :rtype: bytes
+    """
     hsm = _get_hsm()
     ret = hsm.decrypt_pin(cryptPin)
     return ret
@@ -378,15 +407,15 @@ def decryptPin(cryptPin):
 @log_with(log, log_entry=False)
 def encrypt(data, iv, id=0):
     '''
-    encrypt a variable from the given input with an initialiation vector
+    encrypt a variable from the given input with an initialisation vector
 
-    :param input: buffer, which contains the value
-    :type  input: buffer of bytes
-    :param iv:    initilaitation vector
+    :param data: buffer, which contains the value
+    :type  data: buffer of bytes
+    :param iv:    initialisation vector
     :type  iv:    buffer (20 bytes random)
     :param id:    contains the id of which key of the keyset should be used
     :type  id:    int
-    :return:      encryted buffer
+    :return:      encrypted buffer
 
 
     '''
@@ -407,7 +436,7 @@ def decrypt(input, iv, id=0):
     :param id:    contains the id of which key of the keyset should be used
     :type  id:    int
     :return:      decryted buffer
-
+    :rtype: bytes
     '''
     hsm = _get_hsm()
     ret = hsm.decrypt(input, iv, id)
@@ -430,7 +459,11 @@ def aes_decrypt(key, iv, cipherdata, mode=AES.MODE_CBC):
     """
     aes = AES.new(key, mode, iv)
     output = aes.decrypt(cipherdata)
-    padding = ord(output[-1])
+    try:
+        padding = ord(output[-1])
+    except TypeError as _e:
+        # Python 3 already returns the integer
+        padding = output[-1]
     # remove padding
     output = output[0:-padding]
     return output
@@ -452,7 +485,7 @@ def aes_encrypt(key, iv, data, mode=AES.MODE_CBC):
     aes = AES.new(key, mode, iv)
     # pad data
     num_pad = aes.block_size - (len(data) % aes.block_size)
-    data = data + chr(num_pad) * num_pad
+    data = data + int2byte(num_pad) * num_pad
     output = aes.encrypt(data)
     return output
 

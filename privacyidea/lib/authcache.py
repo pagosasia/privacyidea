@@ -74,6 +74,10 @@ def verify_in_cache(username, realm, resolver, password,
     :return: 
     """
     conditions = []
+    try:
+        password = password.encode('utf8')
+    except AttributeError as _e:
+        pass
     conditions.append(AuthCache.username == username)
     conditions.append(AuthCache.realm == realm)
     conditions.append(AuthCache.resolver == resolver)

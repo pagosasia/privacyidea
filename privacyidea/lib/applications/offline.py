@@ -62,7 +62,7 @@ class MachineApplication(MachineApplicationBase):
         """
         new_refilltoken = geturandom(REFILLTOKEN_LENGTH, hex=True)
         token_obj.add_tokeninfo("refilltoken", new_refilltoken)
-        return new_refilltoken
+        return new_refilltoken.decode('utf8')
 
     @staticmethod
     def get_offline_otps(token_obj, otppin, amount, rounds=ROUNDS):
@@ -77,6 +77,10 @@ class MachineApplication(MachineApplicationBase):
         """
         if amount < 0:
             raise ParameterError("Invalid refill amount: {!r}".format(amount))
+        try:
+            otppin = otppin.encode('utf8')
+        except AttributeError as _e:
+            pass
         (res, err, otp_dict) = token_obj.get_multi_otp(count=amount, counter_index=True)
         otps = otp_dict.get("otp")
         for key in otps.keys():

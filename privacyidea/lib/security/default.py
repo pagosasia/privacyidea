@@ -65,7 +65,9 @@ def create_key_from_password(password):
     This is used to encrypt and decrypt the enckey file.
 
     :param password:
+    :type password: bytestring
     :return:
+    :rtype: bytestring
     """
     key = sha256(password).digest()[0:32]
     return key
@@ -173,7 +175,7 @@ class DefaultSecurityModule(SecurityModule):
             raise HSMException("no secret file defined: PI_ENCFILE!")
 
         # We determine, if the file is encrypted.
-        with open(config.get("file")) as f:
+        with open(config.get("file"), 'rb') as f:
             cipher = f.read()
 
         if len(cipher) > 100:
@@ -190,8 +192,7 @@ class DefaultSecurityModule(SecurityModule):
     def _get_secret(self, slot_id=0, password=None):
         """
         internal function, which reads the key from the defined
-        slot in the file. It al499
-        so caches the encryption key to the dictionary
+        slot in the file. It also caches the encryption key to the dictionary
         self.secrets.
 
         If the file is encrypted, the encryption key is decrypted with the
@@ -199,7 +200,8 @@ class DefaultSecurityModule(SecurityModule):
 
         :param slot_id: slot id of the key array
         :type slot_id: int
-
+        :param password: password to decrypt the file
+        :type password: bytestring
         :return: key or secret
         :rtype: binary string
         """
@@ -215,11 +217,11 @@ class DefaultSecurityModule(SecurityModule):
             password = password or PASSWORD
             # Read all keys, decrypt them and return the key for
             # the slot id
-            with open(self.secFile) as f:
+            with open(self.secFile, 'rb') as f:
                 cipher = f.read()
 
             try:
-                keys = self.password_decrypt(cipher, password)
+                keys = self.password_decrypt(cipher.decode('utf8'), password)
             except UnicodeDecodeError as e:
                 raise HSMException("Error decrypting the encryption key. You "
                                    "probably provided the wrong password.")
@@ -227,7 +229,7 @@ class DefaultSecurityModule(SecurityModule):
 
         else:
             # Only read the key with the slot_id
-            with open(self.secFile) as f:
+            with open(self.secFile, 'rb') as f:
                 for _i in range(0, slot_id + 1):
                     secret = f.read(32)
 
@@ -257,7 +259,7 @@ class DefaultSecurityModule(SecurityModule):
         if self.crypted is False:
             return
         if "password" in params:
-            PASSWORD = params.get("password")
+            PASSWORD = params.get("password").encode('utf8')
         else:
             raise HSMException("missing password")
 
@@ -308,9 +310,9 @@ class DefaultSecurityModule(SecurityModule):
         key = self._get_secret(slot_id)
         # convert input to ascii, so we can securely append bin data
         input_data = binascii.b2a_hex(data)
-        input_data += u"\x01\x02"
+        input_data += b"\x01\x02"
         padding = (16 - len(input_data) % 16) % 16
-        input_data += padding * "\0"
+        input_data += padding * b"\0"
         aes = AES.new(key, AES.MODE_CBC, iv)
 
         res = aes.encrypt(input_data)
@@ -329,22 +331,25 @@ class DefaultSecurityModule(SecurityModule):
         <IV:Ciphter>
 
         :param text: The text to encrypt
+        :type text: bytestring
         :param password: The password to derive a key from
+        :type password: bytestring
         :return: IV and cipher text
         :rtype: basestring
         """
         bkey = create_key_from_password(password)
         # convert input to ascii, so we can securely append bin data
         input_data = binascii.b2a_hex(text)
-        input_data += u"\x01\x02"
+        input_data += b"\x01\x02"
         padding = (16 - len(input_data) % 16) % 16
-        input_data += padding * "\0"
+        input_data += padding * b"\0"
         iv = geturandom(16)
         aes = AES.new(bkey, AES.MODE_CBC, iv)
         cipher = aes.encrypt(input_data)
         iv_hex = binascii.hexlify(iv)
         cipher_hex = binascii.hexlify(cipher)
-        return "{0!s}:{1!s}".format(iv_hex, cipher_hex)
+        rval = iv_hex + b':' + cipher_hex
+        return rval.decode('utf8')
 
     @staticmethod
     def password_decrypt(data, password):
@@ -354,9 +359,11 @@ class DefaultSecurityModule(SecurityModule):
         is the first part, separated with a ":".
 
         :param data: The hexlified data
+        :type data: str
         :param password: The password, that is used to decrypt the data
+        :type password: bytestring
         :return: The clear test
-        :rtype: basestring
+        :rtype: bytestring
         """
         bkey = create_key_from_password(password)
         # split the input data
@@ -365,7 +372,7 @@ class DefaultSecurityModule(SecurityModule):
         cipher_bin = binascii.unhexlify(cipher_hex)
         aes = AES.new(bkey, AES.MODE_CBC, iv_bin)
         output = aes.decrypt(cipher_bin)
-        eof = output.rfind(u"\x01\x02")
+        eof = output.rfind(b"\x01\x02")
         if eof >= 0:
             output = output[:eof]
         cleartext = binascii.a2b_hex(output)
@@ -394,7 +401,7 @@ class DefaultSecurityModule(SecurityModule):
         key = self._get_secret(slot_id)
         aes = AES.new(key, AES.MODE_CBC, iv)
         output = aes.decrypt(input_data)
-        eof = output.rfind(u"\x01\x02")
+        eof = output.rfind(b"\x01\x02")
         if eof >= 0:
             output = output[:eof]
 
@@ -426,7 +433,7 @@ class DefaultSecurityModule(SecurityModule):
 
         :param crypt_pin: the encrypted pin with the leading iv,
             separated by the ':'
-        :param crypt_pin: byte string
+        :type crypt_pin: byte string
 
         :return: decrypted data
         :rtype: byte string
@@ -476,7 +483,7 @@ class DefaultSecurityModule(SecurityModule):
         iv = self.random(16)
         v = self.encrypt(value, iv, slot_id)
 
-        cipher_value = binascii.hexlify(iv) + ':' + binascii.hexlify(v)
+        cipher_value = binascii.hexlify(iv) + b':' + binascii.hexlify(v)
         return cipher_value
 
     def _decrypt_value(self, crypt_value, slot_id):
@@ -485,7 +492,7 @@ class DefaultSecurityModule(SecurityModule):
         - used one slot id to encrypt a string with leading iv, separated by ':'
 
         :param crypt_value: the the value that is to be decrypted
-        :param crypt_value: byte string
+        :type crypt_value: byte string
 
         :param  slot_id: slot of the key array
         :type   slot_id: int
@@ -494,7 +501,7 @@ class DefaultSecurityModule(SecurityModule):
         :rtype:  byte string
         """
         # split at ":"
-        pos = crypt_value.find(':')
+        pos = crypt_value.find(b':')
         bIV = crypt_value[:pos]
         bData = crypt_value[pos + 1:]
 

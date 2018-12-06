@@ -390,6 +390,10 @@ class HotpTokenClass(TokenClass):
         otplen = int(self.token.otplen)
         secretHOtp = self.token.get_otpkey()
 
+        try:
+            anOtpVal = anOtpVal.encode('utf8')
+        except AttributeError as _e:
+            pass
         if counter is None:
             counter = int(self.get_otp_count())
         if window is None:
@@ -594,7 +598,7 @@ class HotpTokenClass(TokenClass):
         return the next otp value
 
         :param curTime: Not Used in HOTP
-        :return: next otp value and PIN if possible
+        :return: next otp value and PIN if possible, all in bytes
         :rtype: tuple
         """
         otplen = int(self.token.otplen)
@@ -607,10 +611,11 @@ class HotpTokenClass(TokenClass):
         otpval = hmac2Otp.generate(inc_counter=False)
 
         pin = self.token.get_pin()
-        combined = "{0!s}{1!s}".format(otpval, pin)
 
         if get_from_config("PrependPin") == "True":
-            combined = "{0!s}{1!s}".format(pin, otpval)
+            combined = pin + otpval
+        else:
+            combined = otpval + pin
 
         return 1, pin, otpval, combined
 

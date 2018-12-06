@@ -527,7 +527,7 @@ class TotpTokenClass(HotpTokenClass):
         :param time_seconds: the current time, for which the OTP value
         should be calculated for (date +%s)
         :type: time_seconds: int, unix system time seconds
-        :return: next otp value, and PIN, if possible
+        :return: next otp value, and PIN, if possible, all in bytes
         :rtype: tuple
         """
         otplen = int(self.token.otplen)
@@ -551,10 +551,11 @@ class TotpTokenClass(HotpTokenClass):
                                    challenge=challenge)
 
         pin = self.token.get_pin()
-        combined = "{0!s}{1!s}".format(otpval, pin)
         if get_from_config("PrependPin") == "True":
-            combined = "{0!s}{1!s}".format(pin, otpval)
-            
+            combined = pin + otpval
+        else:
+            combined = otpval + pin
+
         return 1, pin, otpval, combined
 
     @log_with(log)

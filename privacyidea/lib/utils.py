@@ -32,6 +32,7 @@ import binascii
 import base64
 import qrcode
 import sqlalchemy
+from six import text_type, string_types
 from six.moves.urllib.parse import urlunparse, urlparse, urlencode
 from io import BytesIO
 from privacyidea.lib.crypto import urandom, geturandom
@@ -143,15 +144,19 @@ def to_utf8(password):
     :param password: A password that should be converted to utf8
     :type password: unicode
     :return: a utf8 encoded password
+    :rtype: bytestring
     """
     if password:
         try:
             # If the password exists in unicode we encode it to utf-8
             password = password.encode(ENCODING)
-        except UnicodeDecodeError as exx:
+        except UnicodeDecodeError as _e:
             # In case the password is already an encoded string, we fail to
             # encode it again...
             log.debug("Failed to convert password: {0!s}".format(type(password)))
+        except AttributeError as _e:
+            # In Python 3, a byte string does not have the 'encode' attribute
+            log.debug("Password is already encoded")
     return password
 
 
@@ -162,7 +167,7 @@ def to_unicode(s, encoding="utf-8"):
     :param s: The utf-8 encoded str 
     :return: unicode string
     """
-    if type(s) == str:
+    if type(s) != text_type:
         s = s.decode(encoding)
     return s
 
@@ -375,8 +380,7 @@ def get_data_from_params(params, exclude_params, config_description, module,
         if t not in data:
             _missing = True
     if _missing:
-        raise Exception("type or description without necessary data! {0!s}".format(
-                        unicode(params)))
+        raise Exception("type or description without necessary data! {0!s}".format(params))
 
     return data, types, desc
 
@@ -569,8 +573,7 @@ def reload_db(timestamp, db_ts):
 
     :return: bool
     """
-    rdb = False
-    internal_timestamp = None
+    internal_timestamp = ''
     if timestamp:
         internal_timestamp = timestamp.strftime("%s")
     rdb = False
@@ -1086,12 +1089,16 @@ def convert_column_to_unicode(value):
     """
     Helper function for models. If ``value`` is None or a unicode object, do nothing.
     Otherwise, convert it to a unicode object.
+    :param value: the string to convert
+    :type value: str
     :return: a unicode object or None
     """
-    if value is None or isinstance(value, unicode):
+    if value is None or isinstance(value, text_type):
         return value
+    elif isinstance(value, bytes):
+        return value.decode('utf8')
     else:
-        return unicode(value)
+        return text_type(value)
 
 
 def convert_timestamp_to_utc(timestamp):

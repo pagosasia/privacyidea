@@ -207,7 +207,7 @@ class LocalCATestCase(MyTestCase):
         revoked_certs = crl.get_revoked()
         found_revoked_cert = False
         for revoked_cert in revoked_certs:
-            s = revoked_cert.get_serial()
+            s = revoked_cert.get_serial().decode('utf8')
             if s == serial_hex:
                 found_revoked_cert = True
                 break
@@ -272,7 +272,7 @@ class LocalCATestCase(MyTestCase):
         self.assertTrue("template3" in templates)
         cert = cacon.sign_request(SPKAC, options={"spkac": 1,
                                                   "template": "webserver"})
-        expires = cert.get_notAfter()
+        expires = cert.get_notAfter().decode('utf8')
         import datetime
         dt = datetime.datetime.strptime(expires, "%Y%m%d%H%M%SZ")
         ddiff = dt - datetime.datetime.now()

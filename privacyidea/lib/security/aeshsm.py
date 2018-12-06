@@ -313,7 +313,7 @@ class AESHardwareSecurityModule(SecurityModule):  # pragma: no cover
         iv = self.random(16)
         v = self.encrypt(value, iv, key_id)
 
-        return ':'.join([binascii.hexlify(x) for x in [iv, v]])
+        return b':'.join([binascii.hexlify(x) for x in [iv, v]])
 
     def _decrypt_value(self, crypt_value, key_id):
         """
@@ -329,7 +329,7 @@ class AESHardwareSecurityModule(SecurityModule):  # pragma: no cover
         :return: decrypted data
         :rtype:  byte string
         """
-        (iv, data) = [binascii.unhexlify(x) for x in crypt_value.split(':')]
+        (iv, data) = [binascii.unhexlify(x) for x in crypt_value.split(b':')]
 
         return self.decrypt(data, iv, key_id)
 

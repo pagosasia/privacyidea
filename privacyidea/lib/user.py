@@ -60,6 +60,7 @@ from .realm import (get_realms,
                     get_realm)
 from .config import get_from_config
 from .usercache import (user_cache, cache_username, user_init, delete_user_cache)
+from six import text_type, python_2_unicode_compatible
 
 
 ENCODING = 'utf-8'
@@ -68,6 +69,7 @@ log = logging.getLogger(__name__)
 
 
 @log_with(log)
+@python_2_unicode_compatible
 class User(object):
     """
     The user has the attributes
@@ -137,11 +139,11 @@ class User(object):
     def __hash__(self):
         return hash((type(self), self.login, self.resolver, self.realm))
 
-    def __unicode__(self):
+    def __str__(self):
         ret = u"<empty user>"
         if not self.is_empty():
             login = self.login
-            if not isinstance(login, unicode):
+            if not isinstance(login, text_type):
                 login = login.decode(ENCODING)
             # Realm and resolver should always be ASCII
             conf = u''
@@ -149,9 +151,6 @@ class User(object):
                 conf = u'.{0!s}'.format(self.resolver)
             ret = u'<{0!s}{1!s}@{2!s}>'.format(login, conf, self.realm)
         return ret
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
 
     def __repr__(self):
         ret = ('User(login={0!r}, realm={1!r}, resolver={2!r})'.format(
@@ -360,7 +359,7 @@ class User(object):
         try:
             log.info("User %r from realm %r tries to "
                      "authenticate" % (self.login, self.realm))
-            if type(self.login) != unicode:
+            if not isinstance(self.login, text_type):
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can verify the
@@ -425,7 +424,7 @@ class User(object):
         success = False
         try:
             log.info("User info for user {0!r}@{1!r} about to be updated.".format(self.login, self.realm))
-            if type(self.login) != unicode:
+            if not isinstance(self.login, text_type):
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can update the
@@ -465,7 +464,7 @@ class User(object):
         success = False
         try:
             log.info("User {0!r}@{1!r} about to be deleted.".format(self.login, self.realm))
-            if type(self.login) != unicode:
+            if not isinstance(self.login, text_type):
                 self.login = self.login.decode(ENCODING)
             res = self._get_resolvers()
             # Now we know, the resolvers of this user and we can delete it

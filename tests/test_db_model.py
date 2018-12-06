@@ -63,22 +63,34 @@ class TokenModelTestCase(MyTestCase):
         t1.save()
         
         pin_object = t1.get_user_pin()
-        self.assertTrue(pin_object.getPin() == userpin)
+        self.assertTrue(pin_object.getPin() == userpin.encode('utf8'))
         
         t = Token.query.filter_by(id=tid).first()
         self.assertTrue(len(t.pin_hash) > 0)
         self.assertTrue(len(t.user_pin) > 0)
         
         otpObj = t.get_otpkey()
-        self.assertTrue(otpObj.getKey() == otpkey)
+        self.assertTrue(otpObj.getKey() == otpkey.encode('utf8'))
         count = t.count
         self.assertTrue(count == 0)
         
         up = t.get_user_pin()
-        self.assertTrue(up.getPin() == userpin)
+        self.assertTrue(up.getPin() == userpin.encode('utf8'))
         
         self.assertTrue(t.check_hashed_pin("1234"))
-        
+
+        t.set_user_pin(b'HalloDuDa')
+        self.assertTrue(t.get_user_pin().getPin() == b'HalloDuDa')
+
+        t.set_user_pin(u'HelloWörld')
+        self.assertTrue(t.get_user_pin().getPin().decode('utf8') == u'HelloWörld')
+
+        t.set_hashed_pin(b'1234')
+        self.assertTrue(t.check_hashed_pin(b'1234'))
+
+        t.set_hashed_pin(u'HelloWörld')
+        self.assertTrue(t.check_hashed_pin(u'HelloWörld'))
+
         # Delete the token
         t1.delete()
         t = Token.query.filter_by(id=tid).first()
@@ -118,7 +130,7 @@ class TokenModelTestCase(MyTestCase):
         t2.set_pin("thepin")
         t2.save()
         r = t2.check_pin("wrongpin")
-        self.assertTrue(r is False)
+        self.assertFalse(r)
         r = t2.check_pin("thepin")
         self.assertTrue(r)
 
@@ -140,7 +152,7 @@ class TokenModelTestCase(MyTestCase):
         r = t2.check_pin("thepin")
         self.assertTrue(r)
         pin = t2.get_pin()
-        self.assertTrue(pin == "thepin")
+        self.assertTrue(pin == b"thepin")
         
         # set the so pin
         (enc, iv) = t2.set_so_pin("topsecret")
@@ -392,10 +404,10 @@ class TokenModelTestCase(MyTestCase):
         # create the machineresolver and a config entry
         mr = MachineResolver("mr1", "mrtype1")
         mr_id = mr.save()
-        self.assertTrue(mr_id > 0, mr_id)
+        self.assertTrue(mr_id > 0, mr)
         mrc = MachineResolverConfig(resolver="mr1", Key="key1", Value="value1")
-        mrc.save()
-        self.assertTrue(mrc > 0)
+        mrc_id = mrc.save()
+        self.assertTrue(mrc_id > 0, mrc)
         # check that the config entry exist
         db_mrconf = MachineResolverConfig.query.filter(
             MachineResolverConfig.resolver_id == mr_id).first()
@@ -403,8 +415,8 @@ class TokenModelTestCase(MyTestCase):
 
         # add a config value by ID
         mrc = MachineResolverConfig(resolver_id=mr_id, Key="key2", Value="v2")
-        mrc.save()
-        self.assertTrue(mrc > 0)
+        mrc_id = mrc.save()
+        self.assertTrue(mrc_id > 0)
         # update config
         MachineResolverConfig(resolver_id=mr_id, Key="key2",
                               Value="new value").save()

@@ -858,7 +858,11 @@ class TokenClass(object):
             ret = tokeninfo.get(key, default)
             if tokeninfo.get(key + ".type") == "password":
                 # we need to decrypt the return value
-                ret = decryptPassword(ret)
+                try:
+                    ret = ret.encode('utf8')
+                except AttributeError as _e:
+                    pass
+                ret = decryptPassword(ret, convert_unicode=True)
         else:
             ret = tokeninfo
         return ret

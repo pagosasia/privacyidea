@@ -40,6 +40,8 @@ from hashlib import sha1
 from privacyidea.lib.log import log_with
 
 import sys
+from six import indexbytes
+
 (ma, mi, _, _, _,) = sys.version_info
 pver = float(int(ma) + int(mi) * 0.1)
 
@@ -66,6 +68,7 @@ class HmacOtp(object):
         :param challenge: The datainput for OCRA
         :type challenge: hex string
         :return:
+        :rtype: bytestring
         """
         # log.error("hmacSecret()")
         if counter is None:
@@ -79,7 +82,7 @@ class HmacOtp(object):
             data_input = binascii.unhexlify(challenge)
 
         if key is None:
-            dig = str(self.secretObj.hmac_digest(data_input, self.hashfunc))
+            dig = self.secretObj.hmac_digest(data_input, self.hashfunc)
         else:
             if pver > 2.6:
                 dig = hmac.new(key, data_input, self.hashfunc).digest()
@@ -89,12 +92,12 @@ class HmacOtp(object):
         return dig
 
     def truncate(self, digest):
-        offset = ord(digest[-1:]) & 0x0f
+        offset = indexbytes(digest, -1) & 0x0f
 
-        binary = (ord(digest[offset + 0]) & 0x7f) << 24
-        binary |= (ord(digest[offset + 1]) & 0xff) << 16
-        binary |= (ord(digest[offset + 2]) & 0xff) << 8
-        binary |= (ord(digest[offset + 3]) & 0xff)
+        binary = (indexbytes(digest, (offset + 0)) & 0x7f) << 24
+        binary |= (indexbytes(digest, (offset + 1)) & 0xff) << 16
+        binary |= (indexbytes(digest, (offset + 2)) & 0xff) << 8
+        binary |= (indexbytes(digest, (offset + 3)) & 0xff)
 
         return binary % (10 ** self.digits)
 
@@ -112,6 +115,7 @@ class HmacOtp(object):
         :param do_truncation:
         :param challenge: hexlified challenge
         :return:
+        :rtype: bytestring
         """
         if counter is None:
             counter = self.counter
@@ -121,9 +125,9 @@ class HmacOtp(object):
         else:
             hmac = self.hmac(counter=counter, key=key)
         if do_truncation:
-            otp = str(self.truncate(hmac))
+            otp = str(self.truncate(hmac)).encode('utf8')
             """  fill in the leading zeros  """
-            sotp = (self.digits - len(otp)) * "0" + otp
+            sotp = (self.digits - len(otp)) * b"0" + otp
         else:
             sotp = binascii.hexlify(hmac)
             
@@ -133,6 +137,14 @@ class HmacOtp(object):
 
     @log_with(log)
     def checkOtp(self, anOtpVal, window, symetric=False):
+        """
+
+        :param anOtpVal:
+        :type anOtpVal: bytestring
+        :param window:
+        :param symetric:
+        :return:
+        """
         res = -1
         start = self.counter
         end = self.counter + window
@@ -147,7 +159,7 @@ class HmacOtp(object):
             otpval = self.generate(c)
             #log.debug("calculating counter {0!r}".format(c))
 
-            if unicode(otpval) == unicode(anOtpVal):
+            if otpval == anOtpVal:
                 res = c
                 break
         # return -1 or the counter
