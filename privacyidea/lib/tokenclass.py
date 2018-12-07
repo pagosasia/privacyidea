@@ -605,7 +605,7 @@ class TokenClass(object):
         :param description: description of the token
         :type description: string
         """
-        self.token.set_description(u'' + description)
+        self.token.set_description(description)
         return
 
     def set_defaults(self):

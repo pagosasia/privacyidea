@@ -78,7 +78,7 @@ from privacyidea.lib.utils import is_true
 import datetime
 
 from privacyidea.lib import _
-from privacyidea.lib.utils import to_utf8, to_unicode
+from privacyidea.lib.utils import to_utf8, to_unicode, convert_column_to_unicode
 from privacyidea.lib.error import privacyIDEAError
 import uuid
 from ldap3.utils.conv import escape_bytes
@@ -620,7 +620,7 @@ class IdResolver (UserIdResolver):
         filter = u"(&" + self.searchfilter
         for search_key in searchDict.keys():
             # convert to unicode
-            searchDict[search_key] = to_unicode(searchDict[search_key])
+            searchDict[search_key] = convert_column_to_unicode(searchDict[search_key])
             if search_key == "accountExpires":
                 comperator = ">="
                 if searchDict[search_key] in ["1", 1]:

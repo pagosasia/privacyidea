@@ -152,13 +152,21 @@ class TokenModelTestCase(MyTestCase):
         r = t2.check_pin("thepin")
         self.assertTrue(r)
         pin = t2.get_pin()
-        self.assertTrue(pin == b"thepin")
+        self.assertEqual("thepin", pin)
         
         # set the so pin
         (enc, iv) = t2.set_so_pin("topsecret")
         self.assertTrue(len(enc) > 0)
         self.assertTrue(len(iv) > 0)
-        
+
+        (enc, iv) = t2.set_so_pin(b"topsecret")
+        self.assertTrue(enc)
+        self.assertTrue(iv)
+
+        (enc, iv) = t2.set_so_pin(u"topsecrät")
+        self.assertTrue(enc)
+        self.assertTrue(iv)
+
         # get token information
         token_dict = t2.get()
         self.assertTrue(type(token_dict) == dict)
@@ -205,7 +213,15 @@ class TokenModelTestCase(MyTestCase):
         # The key has changed
         self.assertTrue(t2.key_enc != old_key)
         self.assertTrue(t2.pin_hash != old_pin)
-        
+
+        t2.set_otpkey(b'12345')
+        self.assertEqual(b'12345', t2.get_otpkey().getKey(), t2)
+        t2.failcount = 5
+        t2.set_otpkey(u'Hellö', reset_failcount=True)
+        self.assertTrue(t2.failcount == 0, t2)
+        self.assertEqual(u'Hellö', t2.get_otpkey().getKey().decode('utf8'), t2)
+
+        # TODO set description empty
         # delete the token
         ret = t2.delete()
         self.assertTrue(ret)

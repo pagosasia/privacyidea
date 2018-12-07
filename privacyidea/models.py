@@ -38,10 +38,11 @@
 import binascii
 import logging
 from datetime import datetime, timedelta
-
+from six import string_types, text_type, python_2_unicode_compatible
 from dateutil.tz import tzutc
 from json import loads, dumps
 from flask_sqlalchemy import SQLAlchemy
+
 from .lib.crypto import (encrypt,
                          encryptPin,
                          decryptPin,
@@ -54,8 +55,6 @@ from sqlalchemy import and_
 from sqlalchemy.schema import Sequence
 from .lib.log import log_with
 from .lib.utils import is_true, convert_column_to_unicode
-
-from six import string_types, python_2_unicode_compatible
 
 log = logging.getLogger(__name__)
 
@@ -262,12 +261,17 @@ class Token(MethodsMixin, db.Model):
 
     @log_with(log)
     def set_otpkey(self, otpkey, reset_failcount=True):
+        """
+
+        :param otpkey: the OTP key to set
+        :type otpkey: str
+        :param reset_failcount: if the failcounter should be reset
+        :type reset_failcount: bool
+        """
         iv = geturandom(16)
         # encrypt expects its data as a byte string
-        try:
+        if isinstance(otpkey, text_type):
             otpkey = otpkey.encode('utf8')
-        except AttributeError as _e:
-            pass
         enc_otp_key = encrypt(otpkey, iv)
         self.key_enc = binascii.hexlify(enc_otp_key).decode('utf8')
         length = len(self.key_enc)
@@ -391,11 +395,9 @@ class Token(MethodsMixin, db.Model):
     @log_with(log)
     def set_description(self, desc):
         if desc is None:
-            desc = ""
-        try:
+            desc = u""
+        if not isinstance(desc, text_type):
             desc = desc.decode('utf8')
-        except AttributeError as _e:
-            pass
         self.description = desc
         return self.description
 
@@ -470,13 +472,13 @@ class Token(MethodsMixin, db.Model):
     def get_pin(self):
         """
 
-        :return: the decrypted token pin
-        :rtype: bytes
+        :return: the decrypted token pin or -1 if the pin is hashed
+        :rtype: str or int
         """
         ret = -1
         if self.is_pin_encrypted() is True:
             tokenPin = self.pin_hash[2:]
-            ret = decryptPin(tokenPin.encode('utf8'))
+            ret = decryptPin(tokenPin.encode('utf8')).decode('utf8')
         return ret
 
     def set_so_pin(self, soPin):

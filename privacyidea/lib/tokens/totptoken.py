@@ -552,11 +552,11 @@ class TotpTokenClass(HotpTokenClass):
 
         pin = self.token.get_pin()
         if get_from_config("PrependPin") == "True":
-            combined = pin + otpval
+            combined = u"{0!s}{1!s}".format(pin, otpval.decode('utf8'))
         else:
-            combined = otpval + pin
+            combined = u"{0!s}{1!s}".format(otpval.decode('utf8'), pin)
 
-        return 1, pin, otpval, combined
+        return 1, pin, otpval, combined.encode('utf8')
 
     @log_with(log)
     def get_multi_otp(self, count=0, epoch_start=0, epoch_end=0,
